@@ -1,0 +1,66 @@
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    image: pippa-task-manager/app
+    container_name: pippa_task_manager_app
+    restart: unless-stopped
+    ports:
+      - 9001:9000
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: pippa_task_manager
+      DB_USERNAME: pippa_task_manager
+      DB_PASSWORD: pippa_task_manager
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - pippa_task_manager
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:alpine
+    container_name: pippa_task_manager_nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./docker/nginx/log/:/var/log/nginx/
+    networks:
+      - pippa_task_manager
+    depends_on:
+      - app
+
+  db:
+    image: mysql:8.0
+    container_name: pippa_task_manager_db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3313:3306"
+    environment:
+      MYSQL_DATABASE: pippa_task_manager
+      MYSQL_USER: pippa_task_manager
+      MYSQL_PASSWORD: pippa_task_manager
+      MYSQL_ROOT_PASSWORD: pippa_task_manager
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql/
+    networks:
+      - pippa_task_manager
+
+networks:
+  pippa_task_manager:
+    name: pippa_task_manager
+    driver: bridge
