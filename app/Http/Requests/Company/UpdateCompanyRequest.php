@@ -3,12 +3,13 @@
 namespace App\Http\Requests\Company;
 
 use App\Http\Requests\Concerns\ValidatesContactFields;
+use App\Http\Requests\Concerns\ValidatesCompanyNameUniqueness;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class UpdateCompanyRequest extends FormRequest
 {
-    use ValidatesContactFields;
+    use ValidatesCompanyNameUniqueness, ValidatesContactFields;
 
     public function authorize(): bool
     {
@@ -18,7 +19,7 @@ class UpdateCompanyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255', $this->uniqueCompanyNameRule()],
             'code' => ['required', 'string', 'max:255', Rule::unique('companies', 'code')->ignore($this->route('company'))],
             ...$this->contactFieldRules(),
             'logo' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif,webp', 'max:2048'],
