@@ -28,25 +28,13 @@ class Project extends Model
             return $query;
         }
 
-        $query->where('company_id', $user->company_id);
-
-        if ($user->role === UserRole::DEPARTMENT_HEAD) {
-            return $user->department_id
-                ? $query->where('department_id', $user->department_id)
-                : $query->whereRaw('1 = 0');
-        }
-
-        if (! $user->department_id) {
+        if (! $user->company_id || ! $user->department_id) {
             return $query->whereRaw('1 = 0');
         }
 
         return $query
-            ->where('department_id', $user->department_id)
-            ->whereHas('projectTeamAssignments', function (Builder $assignmentQuery) use ($user) {
-                $assignmentQuery->whereHas('team.members', function (Builder $memberQuery) use ($user) {
-                    $memberQuery->where('users.id', $user->id);
-                });
-            });
+            ->where('company_id', $user->company_id)
+            ->where('department_id', $user->department_id);
     }
 
     public function scopeAssignedToUserTeams(Builder $query, User $user): Builder

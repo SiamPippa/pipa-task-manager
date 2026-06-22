@@ -37,11 +37,14 @@ RUN usermod -u 1000 www-data
 
 COPY --chown=www-data:www-data . /var/www/html
 COPY docker/php/php.ini /usr/local/etc/php/
+COPY docker/php/entrypoint.sh /usr/local/bin/entrypoint.sh
 
+USER root
+RUN chmod +x /usr/local/bin/entrypoint.sh
 USER www-data
 
 # Uncomment for production images (not needed if ./ is bind-mounted in dev):
 # RUN COMPOSER_PROCESS_TIMEOUT=3000 composer install --no-dev --optimize-autoloader
 
 EXPOSE 9000
-CMD ["php-fpm"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

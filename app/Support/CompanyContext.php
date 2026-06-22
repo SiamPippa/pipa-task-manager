@@ -25,8 +25,16 @@ class CompanyContext
 
     public static function applyFilters(array $filters, ?User $user = null): array
     {
-        if (! self::canSelectCompany($user) && ($companyId = self::companyId($user))) {
+        if (self::canSelectCompany($user)) {
+            return $filters;
+        }
+
+        if ($companyId = self::companyId($user)) {
             $filters['company_id'] = $companyId;
+        }
+
+        if ($departmentId = self::departmentId($user)) {
+            $filters['department_id'] = $departmentId;
         }
 
         return $filters;
@@ -40,7 +48,7 @@ class CompanyContext
 
         return array_values(array_filter(
             $fields,
-            fn (array $field) => ($field['name'] ?? null) !== 'company_id'
+            fn (array $field) => ! in_array($field['name'] ?? null, ['company_id', 'department_id'], true)
         ));
     }
 
@@ -51,6 +59,31 @@ class CompanyContext
         }
 
         return self::companyId($user) ?? $selected;
+    }
+
+    public static function canSelectDepartment(?User $user = null): bool
+    {
+        return self::canSelectCompany($user);
+    }
+
+    public static function departmentId(?User $user = null): ?int
+    {
+        $user ??= auth()->user();
+
+        return $user?->department_id;
+    }
+
+    public static function resolveDepartmentId(?int $selected = null, ?User $user = null): ?int
+    {
+        if (self::canSelectDepartment($user)) {
+            return $selected;
+        }
+
+        if ($selected !== null) {
+            return $selected;
+        }
+
+        return self::departmentId($user);
     }
 
     public static function filterByCompany(Collection|EloquentCollection $items, ?User $user = null): Collection|EloquentCollection

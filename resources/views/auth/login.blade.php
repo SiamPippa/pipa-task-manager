@@ -111,7 +111,7 @@
                 @csrf
 
                 <div class="mb-3">
-                  <label for="email" class="form-label">Email</label>
+                  <label for="email" class="form-label">Email @include('partials.form.required-marker')</label>
                   <input
                     type="email"
                     class="form-control @error('email') is-invalid @enderror"
@@ -129,7 +129,7 @@
 
                 <div class="mb-3 form-password-toggle">
                   <div class="d-flex justify-content-between">
-                    <label class="form-label" for="password">Password</label>
+                    <label class="form-label" for="password">Password @include('partials.form.required-marker')</label>
                   </div>
                   <div class="input-group input-group-merge">
                     <input

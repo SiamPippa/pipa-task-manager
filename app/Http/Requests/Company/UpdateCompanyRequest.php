@@ -2,11 +2,14 @@
 
 namespace App\Http\Requests\Company;
 
+use App\Http\Requests\Concerns\ValidatesContactFields;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class UpdateCompanyRequest extends FormRequest
 {
+    use ValidatesContactFields;
+
     public function authorize(): bool
     {
         return true;
@@ -17,9 +20,8 @@ class UpdateCompanyRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'code' => ['required', 'string', 'max:255', Rule::unique('companies', 'code')->ignore($this->route('company'))],
-            'email' => ['nullable', 'email', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:255'],
-            'logo' => ['nullable', 'string', 'max:255'],
+            ...$this->contactFieldRules(),
+            'logo' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif,webp', 'max:2048'],
             'status' => ['sometimes', 'boolean'],
         ];
     }

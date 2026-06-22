@@ -41,12 +41,12 @@
     'multiple' => true,
 ])
 <div class="mb-3">
-  <label class="form-label" for="name">Name</label>
+  <label class="form-label" for="name">Name @include('partials.form.required-marker')</label>
   <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $team?->name ?? '') }}" required>
   @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
 </div>
 <div class="mb-3">
-  <label class="form-label" for="code">Code</label>
+  <label class="form-label" for="code">Code @include('partials.form.required-marker')</label>
   <input type="text" class="form-control @error('code') is-invalid @enderror" id="code" name="code" value="{{ old('code', $team?->code ?? '') }}" required>
   @error('code')<div class="invalid-feedback">{{ $message }}</div>@enderror
 </div>

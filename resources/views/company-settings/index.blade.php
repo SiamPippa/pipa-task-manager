@@ -10,7 +10,9 @@
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0">Company Settings</h5>
       @can('create', App\Models\CompanySetting::class)
+      @if ($canCreateSetting)
       <a href="{{ route('company-settings.create') }}" class="btn btn-primary">Add Company Setting</a>
+      @endif
       @endcan
     </div>
     @include('partials.list-filters', ['action' => route('company-settings.index'), 'fields' => $filterFields, 'filters' => $filters])

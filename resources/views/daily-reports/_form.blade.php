@@ -30,7 +30,7 @@
     'lookup' => 'tasks',
 ])
 <div class="mb-3">
-  <label class="form-label" for="report_date">Report Date</label>
+  <label class="form-label" for="report_date">Report Date @include('partials.form.required-marker')</label>
   <input type="date" class="form-control @error('report_date') is-invalid @enderror" id="report_date" name="report_date" value="{{ old('report_date', $dailyReport?->report_date?->format('Y-m-d') ?? '') }}" required>
   @error('report_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
 </div>
@@ -59,7 +59,7 @@
 <h6 class="mb-3">Time Log</h6>
 
 <div class="mb-3">
-  <label class="form-label" for="start_time">Start Time</label>
+  <label class="form-label" for="start_time">Start Time @include('partials.form.required-marker')</label>
   <input type="datetime-local" class="form-control @error('start_time') is-invalid @enderror" id="start_time" name="start_time" value="{{ old('start_time', isset($timeLog->start_time) ? $timeLog->start_time->format('Y-m-d\TH:i') : '') }}" required>
   @error('start_time')<div class="invalid-feedback">{{ $message }}</div>@enderror
 </div>

@@ -2,6 +2,7 @@
     'companies' => [],
     'selected' => null,
     'required' => true,
+    'disabled' => false,
     'wrapperClass' => 'mb-3',
     'placeholder' => 'Search company...',
     'emptyOption' => 'Select company',
@@ -25,17 +26,19 @@
         'options' => $companies,
         'selected' => $companyId,
         'wrapperClass' => $wrapperClass,
+        'disabled' => $disabled,
     ])
 @else
-    @include('partials.form.searchable-select', [
-        'name' => 'company_id',
-        'label' => 'Company',
-        'required' => false,
-        'placeholder' => $placeholder,
-        'emptyOption' => false,
-        'options' => $lockedCompany ? collect([(object) ['id' => $lockedCompany->id, 'name' => $lockedCompany->name]]) : collect(),
-        'selected' => $companyId,
-        'wrapperClass' => $wrapperClass,
-        'disabled' => true,
-    ])
+    <input type="hidden" name="company_id" value="{{ $companyId }}">
+    <div class="{{ $wrapperClass }}">
+        <label class="form-label" for="company_id_display">Company</label>
+        <input
+            type="text"
+            class="form-control"
+            id="company_id_display"
+            value="{{ $lockedCompany?->name ?? '-' }}"
+            disabled
+            readonly
+        >
+    </div>
 @endif

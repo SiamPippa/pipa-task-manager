@@ -19,6 +19,14 @@
         <dt class="col-sm-3">Code</dt><dd class="col-sm-9">{{ $company->code }}</dd>
         <dt class="col-sm-3">Email</dt><dd class="col-sm-9">{{ $company->email ?? '-' }}</dd>
         <dt class="col-sm-3">Phone</dt><dd class="col-sm-9">{{ $company->phone ?? '-' }}</dd>
+        <dt class="col-sm-3">Logo</dt>
+        <dd class="col-sm-9">
+          @if ($company->logo_url)
+            <img src="{{ $company->logo_url }}" alt="{{ $company->name }} logo" class="img-thumbnail" style="max-height: 100px;">
+          @else
+            -
+          @endif
+        </dd>
         <dt class="col-sm-3">Status</dt><dd class="col-sm-9">@if($company->status)<span class="badge bg-success">Active</span>@else<span class="badge bg-secondary">Inactive</span>@endif</dd>
       </dl>
     </div>

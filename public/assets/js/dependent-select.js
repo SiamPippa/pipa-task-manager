@@ -240,8 +240,12 @@ $(function () {
             }
 
             const $companySelect = $form.find('select[name="company_id"]');
+            const hasLockedCompany =
+                $companySelect.length === 0 ||
+                $companySelect.is(":disabled") ||
+                $companySelect.is("[data-fixed-company]");
 
-            if ($companySelect.is(":disabled") || $companySelect.is("[data-fixed-company]")) {
+            if (hasLockedCompany) {
                 onParentChange("company_id", $form);
             }
         });

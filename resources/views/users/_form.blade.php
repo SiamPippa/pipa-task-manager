@@ -6,17 +6,17 @@
 
 <div class="row">
   <div class="col-md-6 mb-3">
-    <label class="form-label" for="name">Name</label>
+    <label class="form-label" for="name">Name @include('partials.form.required-marker')</label>
     <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $user?->name) }}" required>
     @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
   </div>
   <div class="col-md-6 mb-3">
-    <label class="form-label" for="email">Email</label>
+    <label class="form-label" for="email">Email @include('partials.form.required-marker')</label>
     <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email', $user?->email) }}" required>
     @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
   </div>
   <div class="col-md-6 mb-3">
-    <label class="form-label" for="password">Password</label>
+    <label class="form-label" for="password">Password @unless($user) @include('partials.form.required-marker') @endunless</label>
     <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" {{ $user ? '' : 'required' }}>
     @if($user)<small class="text-muted">Leave blank to keep current password</small>@endif
     @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror

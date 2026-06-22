@@ -9,6 +9,7 @@ use App\Http\Requests\CompanySetting\UpdateCompanySettingRequest;
 use App\Models\CompanySetting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class CompanySettingController extends Controller
@@ -27,6 +28,7 @@ class CompanySettingController extends Controller
         return view('company-settings.index', [
             'companySettings' => $this->companySettingService->paginate($filters, 15, ['company']),
             'filters' => $filters,
+            'canCreateSetting' => $this->companiesWithoutSettings()->isNotEmpty(),
             'filterFields' => $this->scopedFilterFields([
                 ['type' => 'text', 'name' => 'search', 'label' => 'Search', 'placeholder' => 'Company name or code', 'col' => 4],
                 ['type' => 'select', 'name' => 'company_id', 'label' => 'Company', 'placeholder' => 'All companies', 'col' => 4, 'options' => $this->companyService->all()],
@@ -34,12 +36,19 @@ class CompanySettingController extends Controller
         ]);
     }
 
-    public function create(): View
+    public function create(): View|RedirectResponse
     {
         $this->authorize('create', CompanySetting::class);
 
+        $companies = $this->companiesWithoutSettings();
+
+        if ($companies->isEmpty()) {
+            return redirect()->route('company-settings.index')
+                ->with('error', 'All available companies already have office hours configured.');
+        }
+
         return view('company-settings.create', [
-            'companies' => $this->scopedForCompany($this->companyService->all()),
+            'companies' => $companies,
         ]);
     }
 
@@ -76,6 +85,17 @@ class CompanySettingController extends Controller
             'companySetting' => $companySetting,
             'companies' => $this->scopedForCompany($this->companyService->all()),
         ]);
+    }
+
+    private function companiesWithoutSettings(?int $exceptCompanyId = null): Collection
+    {
+        $existingCompanyIds = CompanySetting::query()
+            ->when($exceptCompanyId, fn ($query) => $query->where('company_id', '!=', $exceptCompanyId))
+            ->pluck('company_id');
+
+        return $this->scopedForCompany($this->companyService->all())
+            ->reject(fn ($company) => $existingCompanyIds->contains($company->id))
+            ->values();
     }
 
     public function update(UpdateCompanySettingRequest $request, int $company_setting): RedirectResponse

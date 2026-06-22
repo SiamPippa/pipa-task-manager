@@ -29,7 +29,7 @@
 @endphp
 
 <div class="{{ $wrapperClass }}">
-    <label class="form-label" for="{{ $fieldId }}">{{ $label }}</label>
+    <label class="form-label" for="{{ $fieldId }}">{{ $label }}@if($required) @include('partials.form.required-marker') @endif</label>
     <select
         id="{{ $fieldId }}"
         name="{{ $fieldName }}"

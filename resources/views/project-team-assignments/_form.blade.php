@@ -7,11 +7,11 @@
 @include('partials.form.company-field', [
     'companies' => $companies,
     'selected' => $selectedCompanyId,
+    'required' => false,
 ])
 @include('partials.form.searchable-select', [
     'name' => 'department_id',
     'label' => 'Department',
-    'required' => true,
     'placeholder' => 'Search department...',
     'emptyOption' => 'Select department',
     'options' => $departments,

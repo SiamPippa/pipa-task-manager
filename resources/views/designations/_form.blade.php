@@ -3,12 +3,12 @@
     'selected' => $designation->company_id ?? null,
 ])
 <div class="mb-3">
-  <label class="form-label" for="title">Title</label>
+  <label class="form-label" for="title">Title @include('partials.form.required-marker')</label>
   <input type="text" class="form-control @error('title') is-invalid @enderror" id="title" name="title" value="{{ old('title', $designation->title ?? '') }}" required>
   @error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror
 </div>
 <div class="mb-3">
-  <label class="form-label" for="code">Code</label>
+  <label class="form-label" for="code">Code @include('partials.form.required-marker')</label>
   <input type="text" class="form-control @error('code') is-invalid @enderror" id="code" name="code" value="{{ old('code', $designation->code ?? '') }}" required>
   @error('code')<div class="invalid-feedback">{{ $message }}</div>@enderror
 </div>

@@ -1,7 +1,11 @@
 @include('partials.form.company-field', [
     'companies' => $companies,
     'selected' => $companySetting->company_id ?? null,
+    'disabled' => isset($companySetting),
 ])
+@if (isset($companySetting))
+  <input type="hidden" name="company_id" value="{{ old('company_id', $companySetting->company_id) }}">
+@endif
 <div class="mb-3">
   <label class="form-label" for="office_start_time">Office Start Time</label>
   <input type="time" class="form-control @error('office_start_time') is-invalid @enderror" id="office_start_time" name="office_start_time" value="{{ old('office_start_time', isset($companySetting) ? \Illuminate\Support\Str::substr($companySetting->office_start_time, 0, 5) : '') }}">

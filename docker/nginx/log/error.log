@@ -2999,3 +2999,4 @@
 2026/06/13 04:47:08 [notice] 1#1: start worker process 22
 2026/06/13 04:47:08 [notice] 1#1: start worker process 23
 2026/06/13 04:47:08 [notice] 1#1: start worker process 24
+2026/06/21 16:19:21 [error] 23#23: *4038 client intended to send too large body: 1312892 bytes, client: 172.18.0.1, server: localhost, request: "POST /companies/1 HTTP/1.1", host: "localhost:8000", referrer: "http://localhost:8000/companies/1/edit"

@@ -8,7 +8,7 @@
   <div class="card">
     <div class="card-header"><h5 class="mb-0">Edit Company</h5></div>
     <div class="card-body">
-      <form action="{{ route('companies.update', $company) }}" method="POST">
+      <form action="{{ route('companies.update', $company) }}" method="POST" enctype="multipart/form-data">
         @csrf @method('PUT')
         @include('companies._form')
         <button type="submit" class="btn btn-primary">Update</button>
