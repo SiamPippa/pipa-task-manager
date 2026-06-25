@@ -17,14 +17,25 @@ class Project extends Model
     protected $fillable = [
         'company_id',
         'department_id',
+        'client_name',
+        'description',
+        'start_date',
+        'end_date',
+        'estimated_hours',
         'name',
         'code',
         'status',
     ];
 
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'estimated_hours' => 'decimal:2',
+    ];
+
     public function scopeVisibleTo(Builder $query, User $user): Builder
     {
-        if ($user->role === UserRole::ADMIN) {
+        if ($user->actingRole() === UserRole::ADMIN) {
             return $query;
         }
 
@@ -91,5 +102,10 @@ class Project extends Model
     public function dailyReports(): HasMany
     {
         return $this->hasMany(DailyReport::class);
+    }
+
+    public function modules(): HasMany
+    {
+        return $this->hasMany(ProjectModule::class);
     }
 }

@@ -22,6 +22,39 @@
             <!-- /Search -->
 
             <ul class="navbar-nav flex-row align-items-center ms-auto">
+              @auth
+                @php
+                  $assignedRoles = auth()->user()->roleIds();
+                  $activeRole = auth()->user()->actingRole();
+                  $canSwitchRole = count($assignedRoles) > 1;
+                @endphp
+                <li class="nav-item {{ $canSwitchRole ? 'dropdown' : '' }} me-3">
+                  @if ($canSwitchRole)
+                    <a class="nav-link dropdown-toggle" href="javascript:void(0);" data-bs-toggle="dropdown">
+                      <i class="bx bx-id-card me-1"></i>
+                      Acting as: {{ auth()->user()->roleLabel() }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      @foreach ($assignedRoles as $roleId)
+                        <li>
+                          <form action="{{ route('active-role.switch') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="role" value="{{ $roleId }}">
+                            <button type="submit" class="dropdown-item {{ $activeRole === $roleId ? 'active' : '' }}">
+                              {{ \App\Enums\UserRole::label($roleId) }}
+                            </button>
+                          </form>
+                        </li>
+                      @endforeach
+                    </ul>
+                  @else
+                    <span class="nav-link">
+                      <i class="bx bx-id-card me-1"></i>
+                      Acting as: {{ auth()->user()->roleLabel() }}
+                    </span>
+                  @endif
+                </li>
+              @endauth
               <!-- User -->
               <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">

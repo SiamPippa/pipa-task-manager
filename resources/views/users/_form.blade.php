@@ -61,14 +61,15 @@
       'lookup' => 'users',
   ])
   @include('partials.form.searchable-select', [
-      'name' => 'role',
-      'label' => 'Role',
+      'name' => 'roles[]',
+      'label' => 'Roles',
       'required' => true,
-      'placeholder' => 'Search role...',
+      'placeholder' => 'Search roles...',
       'emptyOption' => false,
       'options' => $roles,
-      'selected' => $user?->role ?? UserRole::GENERAL,
+      'selected' => old('roles', $user?->roleIds() ?? [UserRole::GENERAL]),
       'wrapperClass' => 'col-md-6 mb-3',
+      'multiple' => true,
   ])
   <div class="col-12">
     <div class="form-check mb-3">

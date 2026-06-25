@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('company_id');
             $table->integer('department_id')->nullable();
-            $table->foreignId('team_lead_id')->constrained('users')->restrictOnDelete();
+            $table->unsignedBigInteger('team_lead_id');
             $table->string('name');
             $table->string('code')->nullable();
             $table->boolean('status')->default(true);

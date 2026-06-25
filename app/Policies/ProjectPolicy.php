@@ -36,11 +36,11 @@ class ProjectPolicy extends BasePolicy
 
     private function canManageProject(User $user, Project $project): bool
     {
-        if ($user->role === UserRole::ADMIN) {
+        if ($user->actingRole() === UserRole::ADMIN) {
             return true;
         }
 
-        if ($user->role === UserRole::DEPARTMENT_HEAD) {
+        if ($user->actingRole() === UserRole::DEPARTMENT_HEAD) {
             return $this->sameCompany($user, $project) && $this->sameDepartment($user, $project);
         }
 

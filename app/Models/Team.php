@@ -31,7 +31,7 @@ class Team extends Model
 
     public function scopeVisibleTo(Builder $query, User $user): Builder
     {
-        if ($user->role === UserRole::ADMIN) {
+        if ($user->actingRole() === UserRole::ADMIN) {
             return $query;
         }
 

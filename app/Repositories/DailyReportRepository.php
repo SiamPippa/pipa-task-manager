@@ -30,6 +30,7 @@ class DailyReportRepository extends BaseRepository implements DailyReportReposit
 
         $this->applyExactFilter($query, 'user_id', $filters['user_id'] ?? null);
         $this->applyExactFilter($query, 'project_id', $filters['project_id'] ?? null);
+        $this->applyExactFilter($query, 'project_module_id', $filters['project_module_id'] ?? null);
         $this->applyExactFilter($query, 'task_id', $filters['task_id'] ?? null);
         $this->applyDateFromFilter($query, 'report_date', $filters['date_from'] ?? null);
         $this->applyDateToFilter($query, 'report_date', $filters['date_to'] ?? null);

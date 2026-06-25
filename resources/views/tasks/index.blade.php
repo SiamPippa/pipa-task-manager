@@ -18,9 +18,12 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Jira Task No</th>
+            <th>Project</th>
+            <th>Module</th>
+            <th>Type</th>
             <th>Title</th>
+            <th>Branch</th>
+            <th>Jira Task No</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
@@ -29,16 +32,19 @@
           @forelse ($tasks as $item)
           <tr>
             <td>{{ $item->project?->name ?? '-' }}</td>
-            <td>{{ $item->jira_task_no ?? '-' }}</td>
+            <td>{{ $item->module?->name ?? '-' }}</td>
+            <td>{{ $item->typeLabel() }}</td>
             <td>{{ $item->title ?? '-' }}</td>
+            <td><code>{{ $item->branch_name }}</code></td>
+            <td>{{ $item->jira_task_no ?? '-' }}</td>
             <td><span class="badge bg-info">{{ str_replace('_', ' ', ucfirst($item->status)) }}</span></td>
-                        <td>
+            <td>
               @include('partials.resource-actions', ['model' => $item, 'routePrefix' => 'project-tasks'])
             </td>
           </tr>
           @empty
           <tr>
-            <td colspan="20" class="text-center">No records found.</td>
+            <td colspan="8" class="text-center">No records found.</td>
           </tr>
           @endforelse
         </tbody>

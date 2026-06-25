@@ -7,9 +7,10 @@ use App\Contracts\Repositories\CompanySettingRepositoryInterface;
 use App\Contracts\Repositories\DailyReportRepositoryInterface;
 use App\Contracts\Repositories\DepartmentRepositoryInterface;
 use App\Contracts\Repositories\DesignationRepositoryInterface;
-use App\Contracts\Repositories\ProjectTeamAssignmentRepositoryInterface;
 use App\Contracts\Repositories\ProjectAnalyticsRepositoryInterface;
+use App\Contracts\Repositories\ProjectModuleRepositoryInterface;
 use App\Contracts\Repositories\ProjectRepositoryInterface;
+use App\Contracts\Repositories\ProjectTeamAssignmentRepositoryInterface;
 use App\Contracts\Repositories\TaskAssignmentRepositoryInterface;
 use App\Contracts\Repositories\TaskRepositoryInterface;
 use App\Contracts\Repositories\TeamRepositoryInterface;
@@ -21,9 +22,10 @@ use App\Contracts\Services\CompanySettingServiceInterface;
 use App\Contracts\Services\DailyReportServiceInterface;
 use App\Contracts\Services\DepartmentServiceInterface;
 use App\Contracts\Services\DesignationServiceInterface;
-use App\Contracts\Services\ProjectTeamAssignmentServiceInterface;
 use App\Contracts\Services\ProjectAnalyticsServiceInterface;
+use App\Contracts\Services\ProjectModuleServiceInterface;
 use App\Contracts\Services\ProjectServiceInterface;
+use App\Contracts\Services\ProjectTeamAssignmentServiceInterface;
 use App\Contracts\Services\TaskAssignmentServiceInterface;
 use App\Contracts\Services\TaskServiceInterface;
 use App\Contracts\Services\TeamServiceInterface;
@@ -34,9 +36,10 @@ use App\Repositories\CompanySettingRepository;
 use App\Repositories\DailyReportRepository;
 use App\Repositories\DepartmentRepository;
 use App\Repositories\DesignationRepository;
-use App\Repositories\ProjectTeamAssignmentRepository;
 use App\Repositories\ProjectAnalyticsRepository;
+use App\Repositories\ProjectModuleRepository;
 use App\Repositories\ProjectRepository;
+use App\Repositories\ProjectTeamAssignmentRepository;
 use App\Repositories\TaskAssignmentRepository;
 use App\Repositories\TaskRepository;
 use App\Repositories\TeamRepository;
@@ -48,9 +51,10 @@ use App\Services\CompanySettingService;
 use App\Services\DailyReportService;
 use App\Services\DepartmentService;
 use App\Services\DesignationService;
-use App\Services\ProjectTeamAssignmentService;
 use App\Services\ProjectAnalyticsService;
+use App\Services\ProjectModuleService;
 use App\Services\ProjectService;
+use App\Services\ProjectTeamAssignmentService;
 use App\Services\TaskAssignmentService;
 use App\Services\TaskService;
 use App\Services\TeamService;
@@ -79,6 +83,7 @@ class AppServiceProvider extends ServiceProvider
             TaskRepositoryInterface::class => TaskRepository::class,
             TaskAssignmentRepositoryInterface::class => TaskAssignmentRepository::class,
             ProjectTeamAssignmentRepositoryInterface::class => ProjectTeamAssignmentRepository::class,
+            ProjectModuleRepositoryInterface::class => ProjectModuleRepository::class,
             TimeLogRepositoryInterface::class => TimeLogRepository::class,
             DailyReportRepositoryInterface::class => DailyReportRepository::class,
 
@@ -94,6 +99,7 @@ class AppServiceProvider extends ServiceProvider
             TaskServiceInterface::class => TaskService::class,
             TaskAssignmentServiceInterface::class => TaskAssignmentService::class,
             ProjectTeamAssignmentServiceInterface::class => ProjectTeamAssignmentService::class,
+            ProjectModuleServiceInterface::class => ProjectModuleService::class,
             TimeLogServiceInterface::class => TimeLogService::class,
             DailyReportServiceInterface::class => DailyReportService::class,
         ];

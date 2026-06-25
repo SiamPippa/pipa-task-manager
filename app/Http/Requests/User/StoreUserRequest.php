@@ -2,14 +2,15 @@
 
 namespace App\Http\Requests\User;
 
-use App\Http\Requests\Concerns\EnforcesUserCompany;
 use App\Enums\UserRole;
+use App\Http\Requests\Concerns\EnforcesUserCompany;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class StoreUserRequest extends FormRequest
 {
     use EnforcesUserCompany;
+
     public function authorize(): bool
     {
         return true;
@@ -25,7 +26,8 @@ class StoreUserRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
-            'role' => ['required', 'integer', Rule::in(UserRole::values())],
+            'roles' => ['required', 'array', 'min:1'],
+            'roles.*' => ['integer', Rule::in(UserRole::values())],
             'status' => ['sometimes', 'boolean'],
         ];
     }

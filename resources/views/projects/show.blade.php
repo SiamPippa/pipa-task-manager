@@ -17,7 +17,12 @@
         <dt class="col-sm-3">Company</dt><dd class="col-sm-9">{{ $project->company?->name ?? '-' }}</dd>
         <dt class="col-sm-3">Department</dt><dd class="col-sm-9">{{ $project->department?->name ?? '-' }}</dd>
         <dt class="col-sm-3">Name</dt><dd class="col-sm-9">{{ $project->name }}</dd>
+        <dt class="col-sm-3">Client</dt><dd class="col-sm-9">{{ $project->client_name ?? '-' }}</dd>
         <dt class="col-sm-3">Code</dt><dd class="col-sm-9">{{ $project->code }}</dd>
+        <dt class="col-sm-3">Description</dt><dd class="col-sm-9">{{ $project->description ?: '-' }}</dd>
+        <dt class="col-sm-3">Start Date</dt><dd class="col-sm-9">{{ $project->start_date?->format('Y-m-d') ?? '-' }}</dd>
+        <dt class="col-sm-3">End Date</dt><dd class="col-sm-9">{{ $project->end_date?->format('Y-m-d') ?? '-' }}</dd>
+        <dt class="col-sm-3">Estimated Hours</dt><dd class="col-sm-9">{{ $project->estimated_hours !== null ? number_format((float) $project->estimated_hours, 2) : '-' }}</dd>
         <dt class="col-sm-3">Status</dt><dd class="col-sm-9"><span class="badge bg-primary">{{ ucfirst($project->status) }}</span></dd>
       </dl>
     </div>

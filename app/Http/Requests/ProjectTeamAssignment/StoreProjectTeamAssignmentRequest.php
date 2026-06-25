@@ -22,8 +22,6 @@ class StoreProjectTeamAssignmentRequest extends FormRequest
                 'exists:teams,id',
                 Rule::unique('project_team_assignments', 'team_id')->where(fn ($query) => $query->where('project_id', $this->integer('project_id'))),
             ],
-            'assigned_by' => ['nullable', 'integer', 'exists:users,id'],
-            'assigned_at' => ['nullable', 'date'],
         ];
     }
 }

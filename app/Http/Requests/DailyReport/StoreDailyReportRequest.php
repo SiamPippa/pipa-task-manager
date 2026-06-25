@@ -3,6 +3,7 @@
 namespace App\Http\Requests\DailyReport;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreDailyReportRequest extends FormRequest
 {
@@ -15,7 +16,22 @@ class StoreDailyReportRequest extends FormRequest
     {
         return [
             'project_id' => ['required', 'integer', 'exists:projects,id'],
-            'task_id' => ['required', 'integer', 'exists:tasks,id'],
+            'project_module_id' => [
+                'required',
+                'integer',
+                Rule::exists('project_modules', 'id')->where(
+                    fn ($query) => $query->where('project_id', $this->integer('project_id'))
+                ),
+            ],
+            'task_id' => [
+                'required',
+                'integer',
+                Rule::exists('tasks', 'id')->where(
+                    fn ($query) => $query
+                        ->where('project_id', $this->integer('project_id'))
+                        ->where('project_module_id', $this->integer('project_module_id'))
+                ),
+            ],
             'report_date' => ['required', 'date'],
             'summary' => ['nullable', 'string'],
             'blocker' => ['nullable', 'string'],

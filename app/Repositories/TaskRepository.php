@@ -29,7 +29,9 @@ class TaskRepository extends BaseRepository implements TaskRepositoryInterface
         }
 
         $this->applyExactFilter($query, 'project_id', $filters['project_id'] ?? null);
-        $this->applySearchFilter($query, $filters['search'] ?? null, ['title', 'jira_task_no']);
+        $this->applyExactFilter($query, 'project_module_id', $filters['project_module_id'] ?? null);
+        $this->applyExactFilter($query, 'type', $filters['type'] ?? null);
+        $this->applySearchFilter($query, $filters['search'] ?? null, ['title', 'jira_task_no', 'branch_name']);
         $this->applyExactFilter($query, 'status', $filters['status'] ?? null);
     }
 }

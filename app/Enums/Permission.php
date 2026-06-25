@@ -10,6 +10,8 @@ class Permission
 
     public const COMPANIES_MANAGE = 'companies.manage';
 
+    public const COMPANY_SETTINGS_VIEW = 'company-settings.view';
+
     public const COMPANY_SETTINGS_MANAGE = 'company-settings.manage';
 
     public const DEPARTMENTS_MANAGE = 'departments.manage';
@@ -59,6 +61,7 @@ class Permission
             self::ORGANIZATION_ACCESS => 'Organization Access',
             self::COMPANIES_VIEW => 'View Companies',
             self::COMPANIES_MANAGE => 'Manage Companies',
+            self::COMPANY_SETTINGS_VIEW => 'View Company Settings',
             self::COMPANY_SETTINGS_MANAGE => 'Manage Company Settings',
             self::DEPARTMENTS_MANAGE => 'Manage Departments',
             self::DESIGNATIONS_MANAGE => 'Manage Designations',
@@ -93,6 +96,7 @@ class Permission
                 self::ORGANIZATION_ACCESS,
                 self::COMPANIES_VIEW,
                 self::COMPANIES_MANAGE,
+                self::COMPANY_SETTINGS_VIEW,
                 self::COMPANY_SETTINGS_MANAGE,
                 self::DEPARTMENTS_MANAGE,
                 self::DESIGNATIONS_MANAGE,

@@ -27,6 +27,10 @@ class UpdateProjectRequest extends FormRequest
             ],
             'name' => ['required', 'string', 'max:255', $this->uniqueProjectNameRule()],
             'code' => ['required', 'string', 'max:255', Rule::unique('projects', 'code')->ignore($this->route('project'))],
+            'client_name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'status' => ['required', 'string', 'in:active,inactive,completed'],
         ];
     }

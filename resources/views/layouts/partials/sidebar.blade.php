@@ -37,12 +37,14 @@
       </a>
     </li>
 
+    @can('viewAny', App\Models\CompanySetting::class)
     <li class="menu-item {{ request()->routeIs('company-settings.*') ? 'active' : '' }}">
       <a href="{{ route('company-settings.index') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-cog"></i>
         <div>Company Settings</div>
       </a>
     </li>
+    @endcan
 
     <li class="menu-item {{ request()->routeIs('departments.*') ? 'active' : '' }}">
       <a href="{{ route('departments.index') }}" class="menu-link">
@@ -88,7 +90,7 @@
     @endcan
     @endcan
 
-    @if(Gate::check('viewAny', App\Models\Project::class) || Gate::check('viewAny', App\Models\Team::class) || Gate::check('viewAny', App\Models\Task::class))
+    @if(Gate::check('viewAny', App\Models\Project::class) || Gate::check('viewAny', App\Models\ProjectModule::class) || Gate::check('viewAny', App\Models\Team::class) || Gate::check('viewAny', App\Models\Task::class))
     <li class="menu-header small text-uppercase">
       <span class="menu-header-text">Projects & Tasks</span>
     </li>
@@ -99,6 +101,15 @@
       <a href="{{ route('projects.index') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-folder"></i>
         <div>Projects</div>
+      </a>
+    </li>
+    @endcan
+
+    @can('viewAny', App\Models\ProjectModule::class)
+    <li class="menu-item {{ request()->routeIs('project-modules.*') ? 'active' : '' }}">
+      <a href="{{ route('project-modules.index') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-layer"></i>
+        <div>Modules</div>
       </a>
     </li>
     @endcan

@@ -16,7 +16,8 @@ class AssignUserRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'role' => ['required', 'integer', Rule::in(UserRole::values())],
+            'roles' => ['required', 'array', 'min:1'],
+            'roles.*' => ['integer', Rule::in(UserRole::values())],
         ];
     }
 }

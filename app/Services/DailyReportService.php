@@ -61,6 +61,7 @@ class DailyReportService extends BaseService implements DailyReportServiceInterf
         return Arr::only($data, [
             'user_id',
             'project_id',
+            'project_module_id',
             'task_id',
             'report_date',
             'summary',

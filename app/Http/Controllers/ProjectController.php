@@ -7,6 +7,7 @@ use App\Contracts\Services\DepartmentServiceInterface;
 use App\Contracts\Services\ProjectServiceInterface;
 use App\Http\Requests\Project\StoreProjectRequest;
 use App\Http\Requests\Project\UpdateProjectRequest;
+use App\Models\CompanySetting;
 use App\Models\Project;
 use App\Support\FilterOptions;
 use Illuminate\Http\RedirectResponse;
@@ -44,9 +45,13 @@ class ProjectController extends Controller
     {
         $this->authorize('create', Project::class);
 
+        $companies = $this->scopedForCompany($this->companyService->all());
+
         return view('projects.create', [
-            'companies' => $this->scopedForCompany($this->companyService->all()),
+            'project' => new Project,
+            'companies' => $companies,
             'departments' => $this->scopedForCompany($this->departmentService->all()),
+            'companyWorkingHours' => $this->companyWorkingHours($companies),
         ]);
     }
 
@@ -75,10 +80,13 @@ class ProjectController extends Controller
         $projectModel = $this->projectService->findOrFail($project);
         $this->authorize('update', $projectModel);
 
+        $companies = $this->scopedForCompany($this->companyService->all());
+
         return view('projects.edit', [
             'project' => $projectModel,
-            'companies' => $this->scopedForCompany($this->companyService->all()),
+            'companies' => $companies,
             'departments' => $this->scopedForCompany($this->departmentService->all()),
+            'companyWorkingHours' => $this->companyWorkingHours($companies),
         ]);
     }
 
@@ -102,5 +110,13 @@ class ProjectController extends Controller
 
         return redirect()->route('projects.index')
             ->with('success', 'Project deleted successfully.');
+    }
+
+    private function companyWorkingHours($companies): array
+    {
+        return CompanySetting::query()
+            ->whereIn('company_id', $companies->pluck('id'))
+            ->pluck('working_hours_per_day', 'company_id')
+            ->all();
     }
 }

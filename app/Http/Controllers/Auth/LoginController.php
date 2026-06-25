@@ -6,6 +6,7 @@ use App\Contracts\Services\AuthServiceInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Providers\RouteServiceProvider;
+use App\Support\ActiveRole;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -37,6 +38,9 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
+        $request->user()->load('userRoles');
+        ActiveRole::resolve($request->user());
+
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 
@@ -49,6 +53,7 @@ class LoginController extends Controller
     {
         $this->authService->logout();
 
+        ActiveRole::clear();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

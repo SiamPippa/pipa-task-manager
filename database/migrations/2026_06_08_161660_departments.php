@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('code')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
+
+            $table->unique(['company_id', 'name'], 'departments_company_name_unique');
+            $table->unique(['company_id', 'code'], 'departments_company_code_unique');
         });
     }
 

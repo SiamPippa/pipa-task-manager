@@ -18,8 +18,8 @@
       <table class="table table-hover">
         <thead>
           <tr>
-                <th>Name</th>
-                <th>Name</th>
+                <th>Company Name</th>
+                <th>Department Name</th>
                 <th>Code</th>
                 <th>Status</th>
             <th>Actions</th>

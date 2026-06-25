@@ -41,7 +41,7 @@ class DepartmentController extends Controller
         $this->authorize('create', Department::class);
 
         return view('departments.create', [
-            'companies' => $this->scopedForCompany($this->companyService->all()),
+            'companies' => $this->scopedForCompany($this->companyService->allActive()),
         ]);
     }
 
@@ -75,7 +75,7 @@ class DepartmentController extends Controller
 
         return view('departments.edit', [
             'department' => $departmentModel,
-            'companies' => $this->scopedForCompany($this->companyService->all()),
+            'companies' => $this->scopedForCompany($this->companyService->allActive()),
         ]);
     }
 

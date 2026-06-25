@@ -41,7 +41,7 @@ class DesignationController extends Controller
         $this->authorize('create', Designation::class);
 
         return view('designations.create', [
-            'companies' => $this->scopedForCompany($this->companyService->all()),
+            'companies' => $this->scopedForCompany($this->companyService->allActive()),
         ]);
     }
 
@@ -75,7 +75,7 @@ class DesignationController extends Controller
 
         return view('designations.edit', [
             'designation' => $designationModel,
-            'companies' => $this->scopedForCompany($this->companyService->all()),
+            'companies' => $this->scopedForCompany($this->companyService->allActive()),
         ]);
     }
 

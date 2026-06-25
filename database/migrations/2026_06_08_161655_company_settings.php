@@ -20,6 +20,8 @@ return new class extends Migration
             $table->boolean('allow_manual_time_log')->default(true);
             $table->boolean('require_daily_report')->default(true);
             $table->timestamps();
+
+            $table->unique('company_id');
         });
     }
 

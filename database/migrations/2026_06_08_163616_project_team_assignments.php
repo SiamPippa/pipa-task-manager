@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('project_team_assignments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('team_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('assigned_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->unsignedBigInteger('project_id');
+            $table->unsignedBigInteger('team_id');
+            $table->unsignedBigInteger('assigned_by')->nullable();
             $table->timestamp('assigned_at')->nullable();
             $table->timestamps();
 

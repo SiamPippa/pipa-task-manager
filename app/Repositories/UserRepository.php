@@ -17,7 +17,10 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         $this->applyExactFilter($query, 'company_id', $filters['company_id'] ?? null);
         $this->applyExactFilter($query, 'department_id', $filters['department_id'] ?? null);
         $this->applyExactFilter($query, 'designation_id', $filters['designation_id'] ?? null);
-        $this->applyExactFilter($query, 'role', $filters['role'] ?? null);
+
+        if (filled($filters['role'] ?? null)) {
+            $query->whereHas('userRoles', fn ($roleQuery) => $roleQuery->where('role', $filters['role']));
+        }
         $this->applySearchFilter($query, $filters['search'] ?? null, ['name', 'email']);
         $this->applyBooleanFilter($query, 'status', $filters['status'] ?? null);
     }

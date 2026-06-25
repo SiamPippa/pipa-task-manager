@@ -20,6 +20,7 @@
           <tr>
                 <th>User</th>
                 <th>Project</th>
+                <th>Module</th>
                 <th>Task</th>
                 <th>Report Date</th>
                 <th>Progress %</th>
@@ -32,6 +33,7 @@
           <tr>
                 <td>{{ $item->user?->name ?? '-' }}</td>
                 <td>{{ $item->project?->name ?? '-' }}</td>
+                <td>{{ $item->module?->name ?? '-' }}</td>
                 <td>{{ $item->task?->title ?? '-' }}</td>
                 <td>{{ $item->report_date ?? '-' }}</td>
                 <td>{{ $item->progress_percent ?? '-' }}</td>

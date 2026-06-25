@@ -25,7 +25,7 @@ class TaskAssignment extends Model
 
     public function scopeVisibleTo(Builder $query, User $user): Builder
     {
-        if ($user->role === UserRole::GENERAL) {
+        if ($user->actingRole() === UserRole::GENERAL) {
             return $query->where('user_id', $user->id);
         }
 

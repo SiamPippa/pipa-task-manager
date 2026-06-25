@@ -34,7 +34,7 @@
             <td>{{ $item->email ?? '-' }}</td>
             <td>{{ $item->company?->name ?? '-' }}</td>
             <td>{{ $item->department?->name ?? '-' }}</td>
-            <td>{{ $item->roleLabel() }}</td>
+            <td>{{ $item->assignedRoleLabels() }}</td>
             <td>@if($item->status)<span class="badge bg-success">Active</span>@else<span class="badge bg-secondary">Inactive</span>@endif</td>
                         <td>
               @include('partials.resource-actions', ['model' => $item, 'routePrefix' => 'users'])

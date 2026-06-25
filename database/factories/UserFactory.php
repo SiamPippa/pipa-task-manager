@@ -30,8 +30,14 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail(),
             'password' => static::$password ??= Hash::make('password'),
             'status' => $this->faker->boolean(94),
-            'role' => UserRole::GENERAL,
         ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->syncRoles([UserRole::GENERAL]);
+        });
     }
 
     public function forOrganization(

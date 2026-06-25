@@ -30,7 +30,7 @@ class UserController extends Controller
         $filters = $this->scopedFilters($request, ['search', 'company_id', 'department_id', 'designation_id', 'role', 'status']);
 
         return view('users.index', [
-            'users' => $this->userService->paginate($filters, 15, ['company', 'department', 'designation']),
+            'users' => $this->userService->paginate($filters, 15, ['company', 'department', 'designation', 'userRoles']),
             'filters' => $filters,
             'filterFields' => $this->scopedFilterFields([
                 ['type' => 'text', 'name' => 'search', 'label' => 'Search', 'placeholder' => 'Name or email', 'col' => 3],
@@ -76,6 +76,7 @@ class UserController extends Controller
             'department',
             'designation',
             'reportingManager',
+            'userRoles',
         ]);
         $this->authorize('view', $userModel);
 
@@ -86,7 +87,7 @@ class UserController extends Controller
 
     public function edit(int $user): View
     {
-        $userModel = $this->userService->findOrFail($user);
+        $userModel = $this->userService->findOrFail($user, ['userRoles']);
         $this->authorize('update', $userModel);
 
         return view('users.edit', [

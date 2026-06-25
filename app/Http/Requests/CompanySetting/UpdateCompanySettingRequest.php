@@ -3,40 +3,28 @@
 namespace App\Http\Requests\CompanySetting;
 
 use App\Http\Requests\Concerns\EnforcesUserCompany;
+use App\Http\Requests\Concerns\ValidatesCompanySetting;
+use App\Models\CompanySetting;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class UpdateCompanySettingRequest extends FormRequest
 {
-    use EnforcesUserCompany;
+    use EnforcesUserCompany, ValidatesCompanySetting;
 
     public function authorize(): bool
     {
-        return true;
+        $companySetting = CompanySetting::query()->find($this->route('company_setting'));
+
+        return $companySetting && $this->user()->can('update', $companySetting);
     }
 
     public function rules(): array
     {
-        return [
-            'company_id' => [
-                'required',
-                'integer',
-                'exists:companies,id',
-                Rule::unique('company_settings', 'company_id')->ignore($this->route('company_setting')),
-            ],
-            'office_start_time' => ['nullable', 'date_format:H:i'],
-            'office_end_time' => ['nullable', 'date_format:H:i', 'after:office_start_time'],
-            'working_hours_per_day' => ['nullable', 'integer', 'min:1', 'max:24'],
-            'allow_manual_time_log' => ['sometimes', 'boolean'],
-            'require_daily_report' => ['sometimes', 'boolean'],
-        ];
+        return $this->companySettingRules($this->route('company_setting'));
     }
 
     public function messages(): array
     {
-        return [
-            'company_id.unique' => 'This company already has office hours configured.',
-            'office_end_time.after' => 'Office end time must be after office start time.',
-        ];
+        return $this->companySettingMessages();
     }
 }

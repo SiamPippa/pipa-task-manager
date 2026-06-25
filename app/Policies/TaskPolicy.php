@@ -34,7 +34,7 @@ class TaskPolicy extends BasePolicy
             return true;
         }
 
-        if ($user->role === UserRole::GENERAL) {
+        if ($user->actingRole() === UserRole::GENERAL) {
             return $task->assignees()->where('users.id', $user->id)->exists();
         }
 
@@ -47,11 +47,11 @@ class TaskPolicy extends BasePolicy
             return false;
         }
 
-        if ($user->role === UserRole::ADMIN) {
+        if ($user->actingRole() === UserRole::ADMIN) {
             return true;
         }
 
-        if ($user->role === UserRole::DEPARTMENT_HEAD) {
+        if ($user->actingRole() === UserRole::DEPARTMENT_HEAD) {
             return $task->project && $this->sameDepartment($user, $task->project);
         }
 

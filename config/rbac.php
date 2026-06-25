@@ -21,7 +21,7 @@ return [
             Permission::ORGANIZATION_ACCESS,
             Permission::RBAC_VIEW,
             Permission::COMPANIES_VIEW,
-            Permission::COMPANY_SETTINGS_MANAGE,
+            Permission::COMPANY_SETTINGS_VIEW,
             Permission::DEPARTMENTS_MANAGE,
             Permission::DESIGNATIONS_MANAGE,
             Permission::USERS_MANAGE,

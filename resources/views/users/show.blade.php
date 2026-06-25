@@ -20,7 +20,7 @@
         <dt class="col-sm-3">Department</dt><dd class="col-sm-9">{{ $user->department?->name ?? '-' }}</dd>
         <dt class="col-sm-3">Designation</dt><dd class="col-sm-9">{{ $user->designation?->title ?? '-' }}</dd>
         <dt class="col-sm-3">Reporting Manager</dt><dd class="col-sm-9">{{ $user->reportingManager?->name ?? '-' }}</dd>
-        <dt class="col-sm-3">Role</dt><dd class="col-sm-9">{{ $user->roleLabel() }}</dd>
+        <dt class="col-sm-3">Roles</dt><dd class="col-sm-9">{{ $user->assignedRoleLabels() }}</dd>
         <dt class="col-sm-3">Status</dt><dd class="col-sm-9">@if($user->status)<span class="badge bg-success">Active</span>@else<span class="badge bg-secondary">Inactive</span>@endif</dd>
       </dl>
     </div>

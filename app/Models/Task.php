@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\UserRole;
+use App\Enums\TaskType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,8 +16,11 @@ class Task extends Model
 
     protected $fillable = [
         'project_id',
+        'project_module_id',
         'jira_task_no',
         'title',
+        'branch_name',
+        'type',
         'description',
         'estimate_hours',
         'status',
@@ -42,6 +45,16 @@ class Task extends Model
         return $this->belongsTo(Project::class);
     }
 
+    public function module(): BelongsTo
+    {
+        return $this->belongsTo(ProjectModule::class, 'project_module_id');
+    }
+
+    public function typeLabel(): string
+    {
+        return TaskType::label($this->type);
+    }
+
     public function assignments(): HasMany
     {
         return $this->hasMany(TaskAssignment::class);
@@ -62,5 +75,10 @@ class Task extends Model
     public function dailyReports(): HasMany
     {
         return $this->hasMany(DailyReport::class);
+    }
+
+    public function histories(): HasMany
+    {
+        return $this->hasMany(TaskHistory::class)->latest();
     }
 }

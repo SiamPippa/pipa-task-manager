@@ -29,4 +29,14 @@ class CompanyFactory extends Factory
             'status' => $this->faker->boolean(92),
         ];
     }
+
+    public function inactive(): static
+    {
+        return $this->state(fn () => ['status' => false]);
+    }
+
+    public function active(): static
+    {
+        return $this->state(fn () => ['status' => true]);
+    }
 }

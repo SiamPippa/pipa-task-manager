@@ -10,7 +10,7 @@ class CompanySettingPolicy extends BasePolicy
 {
     public function viewAny(User $user): bool
     {
-        return $this->allows($user, Permission::ORGANIZATION_ACCESS);
+        return $this->allows($user, Permission::COMPANY_SETTINGS_VIEW);
     }
 
     public function view(User $user, CompanySetting $companySetting): bool

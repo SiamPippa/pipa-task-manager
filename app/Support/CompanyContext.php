@@ -2,7 +2,6 @@
 
 namespace App\Support;
 
-use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
@@ -13,7 +12,7 @@ class CompanyContext
     {
         $user ??= auth()->user();
 
-        return $user?->role === UserRole::ADMIN;
+        return ActiveRole::isAdmin($user);
     }
 
     public static function companyId(?User $user = null): ?int

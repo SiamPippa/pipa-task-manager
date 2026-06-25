@@ -24,8 +24,6 @@ class UpdateProjectTeamAssignmentRequest extends FormRequest
                     ->where(fn ($query) => $query->where('project_id', $this->integer('project_id')))
                     ->ignore($this->route('project_team_assignment')),
             ],
-            'assigned_by' => ['nullable', 'integer', 'exists:users,id'],
-            'assigned_at' => ['nullable', 'date'],
         ];
     }
 }

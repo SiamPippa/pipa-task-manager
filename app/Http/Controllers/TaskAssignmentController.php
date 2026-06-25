@@ -8,6 +8,7 @@ use App\Contracts\Services\TaskAssignmentServiceInterface;
 use App\Contracts\Services\TaskServiceInterface;
 use App\Contracts\Services\UserServiceInterface;
 use App\Http\Requests\TaskAssignment\StoreTaskAssignmentRequest;
+use App\Http\Requests\TaskAssignment\UpdateAssignedTaskStatusRequest;
 use App\Http\Requests\TaskAssignment\UpdateTaskAssignmentRequest;
 use App\Models\TaskAssignment;
 use Illuminate\Http\RedirectResponse;
@@ -32,7 +33,7 @@ class TaskAssignmentController extends Controller
         $filters['viewer_id'] = auth()->id();
 
         return view('task-assignments.index', [
-            'taskAssignments' => $this->taskAssignmentService->paginate($filters, 15, ['task.project', 'user', 'assignedBy']),
+            'taskAssignments' => $this->taskAssignmentService->paginate($filters, 15, ['task.project', 'task.module', 'user', 'assignedBy']),
             'filters' => $filters,
             'filterFields' => $this->scopedFilterFields([
                 ['type' => 'text', 'name' => 'search', 'label' => 'Search', 'placeholder' => 'Task or user', 'col' => 3],
@@ -69,12 +70,33 @@ class TaskAssignmentController extends Controller
 
     public function show(int $task_assignment): View
     {
-        $taskAssignment = $this->taskAssignmentService->findOrFail($task_assignment, ['task', 'user', 'assignedBy']);
+        $taskAssignment = $this->taskAssignmentService->findOrFail($task_assignment, [
+            'task.project',
+            'task.module',
+            'task.histories.actor',
+            'user',
+            'assignedBy',
+        ]);
         $this->authorize('view', $taskAssignment);
 
         return view('task-assignments.show', [
             'taskAssignment' => $taskAssignment,
         ]);
+    }
+
+    public function updateTaskStatus(UpdateAssignedTaskStatusRequest $request, int $task_assignment): RedirectResponse
+    {
+        $taskAssignment = $this->taskAssignmentService->findOrFail($task_assignment, ['task']);
+        $this->authorize('view', $taskAssignment);
+
+        $task = $taskAssignment->task;
+        abort_if(! $task, 404);
+
+        $this->authorize('update', $task);
+        $this->taskService->update($task->id, ['status' => $request->validated('status')]);
+
+        return redirect()->route('task-assignments.show', $taskAssignment)
+            ->with('success', 'Task status updated successfully.');
     }
 
     public function edit(int $task_assignment): View

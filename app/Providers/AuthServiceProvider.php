@@ -10,6 +10,7 @@ use App\Models\DailyReport;
 use App\Models\Department;
 use App\Models\Designation;
 use App\Models\Project;
+use App\Models\ProjectModule;
 use App\Models\ProjectTeamAssignment;
 use App\Models\Task;
 use App\Models\TaskAssignment;
@@ -20,6 +21,7 @@ use App\Policies\CompanySettingPolicy;
 use App\Policies\DailyReportPolicy;
 use App\Policies\DepartmentPolicy;
 use App\Policies\DesignationPolicy;
+use App\Policies\ProjectModulePolicy;
 use App\Policies\ProjectPolicy;
 use App\Policies\ProjectTeamAssignmentPolicy;
 use App\Policies\TaskAssignmentPolicy;
@@ -41,6 +43,7 @@ class AuthServiceProvider extends ServiceProvider
         Project::class => ProjectPolicy::class,
         Team::class => TeamPolicy::class,
         ProjectTeamAssignment::class => ProjectTeamAssignmentPolicy::class,
+        ProjectModule::class => ProjectModulePolicy::class,
         Task::class => TaskPolicy::class,
         TaskAssignment::class => TaskAssignmentPolicy::class,
         DailyReport::class => DailyReportPolicy::class,
@@ -51,6 +54,6 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Gate::define('view-rbac', fn (User $user) => Rbac::allows($user, Permission::RBAC_VIEW));
-        Gate::define('assign-user-roles', fn (User $user) => $user->role === UserRole::ADMIN);
+        Gate::define('assign-user-roles', fn (User $user) => $user->actingRole() === UserRole::ADMIN);
     }
 }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('time_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('daily_report_id')->unique()->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('daily_report_id')->unique();
             $table->integer('project_id');
             $table->integer('task_id');
             $table->integer('user_id');

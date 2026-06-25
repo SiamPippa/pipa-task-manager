@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Contracts\Repositories\CompanyRepositoryInterface;
 use App\Contracts\Services\CompanyServiceInterface;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -15,6 +16,11 @@ class CompanyService extends BaseService implements CompanyServiceInterface
     public function __construct(CompanyRepositoryInterface $repository)
     {
         parent::__construct($repository);
+    }
+
+    public function allActive(array $with = []): Collection
+    {
+        return $this->repository->allActive($with);
     }
 
     public function create(array $data): Model

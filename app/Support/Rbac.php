@@ -12,11 +12,13 @@ class Rbac
 {
     public static function allows(User $user, string $permission): bool
     {
-        if ($user->role === UserRole::ADMIN) {
+        $role = $user->actingRole();
+
+        if ($role === UserRole::ADMIN) {
             return true;
         }
 
-        $permissions = config('rbac.roles.'.$user->role, []);
+        $permissions = config('rbac.roles.'.$role, []);
 
         if (in_array('*', $permissions, true)) {
             return true;
@@ -31,7 +33,7 @@ class Rbac
 
     public static function inSameCompany(User $user, Model $model): bool
     {
-        if ($user->role === UserRole::ADMIN) {
+        if (ActiveRole::isAdmin($user)) {
             return true;
         }
 
@@ -44,7 +46,7 @@ class Rbac
 
     public static function inSameDepartment(User $user, Model $model): bool
     {
-        if ($user->role === UserRole::ADMIN) {
+        if (ActiveRole::isAdmin($user)) {
             return true;
         }
 

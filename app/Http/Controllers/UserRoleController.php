@@ -28,7 +28,7 @@ class UserRoleController extends Controller
         $filters = $this->scopedFilters($request, ['search', 'company_id', 'department_id', 'role']);
 
         return view('user-roles.index', [
-            'users' => $this->userService->paginate($filters, 15, ['company', 'department']),
+            'users' => $this->userService->paginate($filters, 15, ['company', 'department', 'userRoles']),
             'filters' => $filters,
             'roles' => UserRole::labels(),
             'filterFields' => $this->scopedFilterFields([
@@ -44,14 +44,15 @@ class UserRoleController extends Controller
     {
         Gate::authorize('assign-user-roles');
 
-        $userModel = $this->userService->findOrFail($user);
+        $userModel = $this->userService->findOrFail($user, ['userRoles']);
+        $roles = array_map('intval', $request->validated('roles'));
 
-        if ($userModel->id === auth()->id() && (int) $request->validated('role') !== UserRole::ADMIN) {
-            return back()->with('error', 'You cannot change your own admin role.');
+        if ($userModel->id === auth()->id() && $userModel->hasRole(UserRole::ADMIN) && ! in_array(UserRole::ADMIN, $roles, true)) {
+            return back()->with('error', 'You cannot remove your own admin role.');
         }
 
-        $this->userService->update($user, ['role' => $request->validated('role')]);
+        $this->userService->update($user, ['roles' => $roles]);
 
-        return back()->with('success', 'Role updated successfully.');
+        return back()->with('success', 'Roles updated successfully.');
     }
 }

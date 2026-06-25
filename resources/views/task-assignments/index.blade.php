@@ -19,6 +19,7 @@
         <thead>
           <tr>
                 <th>Project</th>
+                <th>Module</th>
                 <th>Task</th>
                 <th>User</th>
                 <th>Assigned At</th>
@@ -29,6 +30,7 @@
           @forelse ($taskAssignments as $item)
           <tr>
                 <td>{{ $item->task?->project?->name ?? '-' }}</td>
+                <td>{{ $item->task?->module?->name ?? '-' }}</td>
                 <td>{{ $item->task?->title ?? '-' }}</td>
                 <td>{{ $item->user?->name ?? '-' }}</td>
                 <td>{{ $item->assigned_at ?? '-' }}</td>

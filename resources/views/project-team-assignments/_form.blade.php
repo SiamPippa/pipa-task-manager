@@ -41,18 +41,5 @@
     'dependsOn' => ['company_id', 'department_id'],
     'lookup' => 'teams',
 ])
-@include('partials.form.searchable-select', [
-    'name' => 'assigned_by',
-    'label' => 'Assigned By',
-    'placeholder' => 'Search assigner...',
-    'emptyOption' => 'Current user (default)',
-    'options' => $users,
-    'selected' => $projectTeamAssignment?->assigned_by,
-])
-<div class="mb-3">
-  <label class="form-label" for="assigned_at">Assigned At</label>
-  <input type="datetime-local" class="form-control @error('assigned_at') is-invalid @enderror" id="assigned_at" name="assigned_at" value="{{ old('assigned_at', $projectTeamAssignment?->assigned_at?->format('Y-m-d\TH:i') ?? '') }}">
-  @error('assigned_at')<div class="invalid-feedback">{{ $message }}</div>@enderror
-</div>
 
 @include('partials.form.searchable-select-assets')

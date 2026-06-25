@@ -18,18 +18,22 @@ class UserService extends BaseService implements UserServiceInterface
     public function create(array $data): Model
     {
         $data = $this->normalizeOptionalFields($data);
-        $data['role'] = $data['role'] ?? UserRole::GENERAL;
+        $roles = $this->extractRoles($data) ?? [UserRole::GENERAL];
 
         if (! empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         }
 
-        return parent::create($data);
+        $user = parent::create($data);
+        $user->syncRoles($roles);
+
+        return $user->load('userRoles');
     }
 
     public function update(int $id, array $data): Model
     {
         $data = $this->normalizeOptionalFields($data);
+        $roles = $this->extractRoles($data);
 
         if (empty($data['password'])) {
             unset($data['password']);
@@ -37,7 +41,13 @@ class UserService extends BaseService implements UserServiceInterface
             $data['password'] = Hash::make($data['password']);
         }
 
-        return parent::update($id, $data);
+        $user = parent::update($id, $data);
+
+        if ($roles !== null) {
+            $user->syncRoles($roles);
+        }
+
+        return $user->load('userRoles');
     }
 
     protected function normalizeOptionalFields(array $data): array
@@ -49,5 +59,27 @@ class UserService extends BaseService implements UserServiceInterface
         }
 
         return $data;
+    }
+
+    /**
+     * @return array<int, int>|null
+     */
+    private function extractRoles(array &$data): ?array
+    {
+        if (array_key_exists('roles', $data)) {
+            $roles = array_map('intval', $data['roles'] ?? []);
+            unset($data['roles']);
+
+            return $roles;
+        }
+
+        if (array_key_exists('role', $data)) {
+            $role = (int) $data['role'];
+            unset($data['role']);
+
+            return [$role];
+        }
+
+        return null;
     }
 }

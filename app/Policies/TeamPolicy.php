@@ -29,17 +29,17 @@ class TeamPolicy extends BasePolicy
 
     public function create(User $user): bool
     {
-        return $this->allows($user, Permission::TEAMS_MANAGE);
+        return $this->isDepartmentHeadManager($user) || $this->isTeamLeadManager($user);
     }
 
     public function update(User $user, Team $team): bool
     {
-        if ($this->allows($user, Permission::TEAMS_MANAGE)) {
+        if ($this->isDepartmentHeadManager($user)) {
             return $this->canManageDepartmentTeam($user, $team);
         }
 
-        if ($this->allows($user, Permission::TEAMS_MANAGE_LED)) {
-            return $team->team_lead_id === $user->id;
+        if ($this->isTeamLeadManager($user)) {
+            return $this->sameCompany($user, $team);
         }
 
         return false;
@@ -52,14 +52,18 @@ class TeamPolicy extends BasePolicy
 
     private function canManageDepartmentTeam(User $user, Team $team): bool
     {
-        if ($user->role === UserRole::ADMIN) {
-            return true;
-        }
+        return $this->sameCompany($user, $team) && $this->sameDepartment($user, $team);
+    }
 
-        if ($user->role === UserRole::DEPARTMENT_HEAD) {
-            return $this->sameCompany($user, $team) && $this->sameDepartment($user, $team);
-        }
+    private function isDepartmentHeadManager(User $user): bool
+    {
+        return $user->actingRole() === UserRole::DEPARTMENT_HEAD
+            && $this->allows($user, Permission::TEAMS_MANAGE);
+    }
 
-        return false;
+    private function isTeamLeadManager(User $user): bool
+    {
+        return $user->actingRole() === UserRole::TEAM_LEAD
+            && $this->allows($user, Permission::TEAMS_MANAGE_LED);
     }
 }

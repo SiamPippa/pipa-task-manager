@@ -1,18 +1,20 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\LookupController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanySettingController;
 use App\Http\Controllers\DailyReportController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DesignationController;
-use App\Http\Controllers\ProjectTeamAssignmentController;
+use App\Http\Controllers\LookupController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProjectAnalyticsController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectModuleController;
+use App\Http\Controllers\ProjectTeamAssignmentController;
+use App\Http\Controllers\SwitchActiveRoleController;
 use App\Http\Controllers\TaskAssignmentController;
 use App\Http\Controllers\TaskController;
-use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserRoleController;
@@ -27,6 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [ProjectAnalyticsController::class, 'index'])->name('dashboard');
     Route::get('/analytics/projects/{project}', [ProjectAnalyticsController::class, 'show'])->name('analytics.projects.show');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::post('/active-role', SwitchActiveRoleController::class)->name('active-role.switch');
     Route::get('/lookup/{type}', LookupController::class)->name('lookup');
 
     Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index');
@@ -41,9 +44,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('designations', DesignationController::class);
     Route::resource('users', UserController::class);
     Route::resource('teams', TeamController::class);
+    Route::resource('project-modules', ProjectModuleController::class);
     Route::resource('project-team-assignments', ProjectTeamAssignmentController::class);
     Route::resource('projects', ProjectController::class);
     Route::resource('project-tasks', TaskController::class);
+    Route::patch('/task-assignments/{task_assignment}/task-status', [TaskAssignmentController::class, 'updateTaskStatus'])
+        ->name('task-assignments.task-status.update');
     Route::resource('task-assignments', TaskAssignmentController::class);
     Route::resource('daily-reports', DailyReportController::class);
 });

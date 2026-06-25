@@ -18,6 +18,18 @@
     'selected' => $dailyReport?->project_id,
 ])
 @include('partials.form.searchable-select', [
+    'name' => 'project_module_id',
+    'label' => 'Module',
+    'required' => true,
+    'placeholder' => 'Search module...',
+    'emptyOption' => 'Select module',
+    'options' => $modules ?? collect(),
+    'optionLabel' => 'name',
+    'selected' => $dailyReport?->project_module_id,
+    'dependsOn' => 'project_id',
+    'lookup' => 'project-modules',
+])
+@include('partials.form.searchable-select', [
     'name' => 'task_id',
     'label' => 'Task',
     'required' => true,
@@ -26,7 +38,7 @@
     'options' => $tasks ?? collect(),
     'optionLabel' => 'title',
     'selected' => $dailyReport?->task_id,
-    'dependsOn' => 'project_id',
+    'dependsOn' => ['project_id', 'project_module_id'],
     'lookup' => 'tasks',
 ])
 <div class="mb-3">

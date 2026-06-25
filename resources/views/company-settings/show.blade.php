@@ -8,7 +8,9 @@
     <div class="card-header d-flex justify-content-between">
       <h5 class="mb-0">Company Setting Details</h5>
       <div>
+        @can('update', $companySetting)
         <a href="{{ route('company-settings.edit', $companySetting) }}" class="btn btn-warning btn-sm">Edit</a>
+        @endcan
         <a href="{{ route('company-settings.index') }}" class="btn btn-secondary btn-sm">Back</a>
       </div>
     </div>

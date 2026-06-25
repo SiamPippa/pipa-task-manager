@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Contracts\Services\CompanyServiceInterface;
 use App\Contracts\Services\DepartmentServiceInterface;
-use App\Contracts\Services\ProjectTeamAssignmentServiceInterface;
 use App\Contracts\Services\ProjectServiceInterface;
+use App\Contracts\Services\ProjectTeamAssignmentServiceInterface;
 use App\Contracts\Services\TeamServiceInterface;
-use App\Contracts\Services\UserServiceInterface;
 use App\Http\Requests\ProjectTeamAssignment\StoreProjectTeamAssignmentRequest;
 use App\Http\Requests\ProjectTeamAssignment\UpdateProjectTeamAssignmentRequest;
 use App\Models\ProjectTeamAssignment;
@@ -23,7 +22,6 @@ class ProjectTeamAssignmentController extends Controller
         private readonly DepartmentServiceInterface $departmentService,
         private readonly ProjectServiceInterface $projectService,
         private readonly TeamServiceInterface $teamService,
-        private readonly UserServiceInterface $userService
     ) {}
 
     public function index(Request $request): View
@@ -55,7 +53,6 @@ class ProjectTeamAssignmentController extends Controller
             'departments' => $this->scopedForCompany($this->departmentService->all()),
             'projects' => collect(),
             'teams' => collect(),
-            'users' => $this->scopedForCompany($this->userService->all()),
         ]);
     }
 
@@ -64,8 +61,8 @@ class ProjectTeamAssignmentController extends Controller
         $this->authorize('create', ProjectTeamAssignment::class);
 
         $data = $request->validated();
-        $data['assigned_by'] = $data['assigned_by'] ?? auth()->id();
-        $data['assigned_at'] = $data['assigned_at'] ?? now();
+        $data['assigned_by'] = auth()->id();
+        $data['assigned_at'] = now();
 
         $this->projectTeamAssignmentService->create($data);
 
@@ -94,7 +91,6 @@ class ProjectTeamAssignmentController extends Controller
             'departments' => $this->scopedForCompany($this->departmentService->all()),
             'projects' => $this->scopedForCompany($this->projectService->all()),
             'teams' => $this->scopedForCompany($this->teamService->all()),
-            'users' => $this->scopedForCompany($this->userService->all()),
         ]);
     }
 

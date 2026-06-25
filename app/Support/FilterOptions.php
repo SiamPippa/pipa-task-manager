@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Enums\TaskType;
 use App\Enums\UserRole;
 use App\Models\User;
 
@@ -44,6 +45,14 @@ class FilterOptions
         ];
     }
 
+    public static function taskTypes(): array
+    {
+        return collect(TaskType::labels())
+            ->map(fn (string $label, string $value) => ['value' => $value, 'label' => $label])
+            ->values()
+            ->all();
+    }
+
     public static function userRoles(): array
     {
         return collect(UserRole::labels())
@@ -64,7 +73,7 @@ class FilterOptions
     {
         $roles = UserRole::labels();
 
-        if ($actor->role !== UserRole::ADMIN) {
+        if ($actor->actingRole() !== UserRole::ADMIN) {
             unset($roles[UserRole::ADMIN]);
         }
 

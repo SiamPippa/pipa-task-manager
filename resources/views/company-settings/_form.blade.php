@@ -7,18 +7,18 @@
   <input type="hidden" name="company_id" value="{{ old('company_id', $companySetting->company_id) }}">
 @endif
 <div class="mb-3">
-  <label class="form-label" for="office_start_time">Office Start Time</label>
-  <input type="time" class="form-control @error('office_start_time') is-invalid @enderror" id="office_start_time" name="office_start_time" value="{{ old('office_start_time', isset($companySetting) ? \Illuminate\Support\Str::substr($companySetting->office_start_time, 0, 5) : '') }}">
+  <label class="form-label" for="office_start_time">Office Start Time @include('partials.form.required-marker')</label>
+  <input type="time" class="form-control @error('office_start_time') is-invalid @enderror" id="office_start_time" name="office_start_time" value="{{ old('office_start_time', isset($companySetting) ? \Illuminate\Support\Str::substr($companySetting->office_start_time, 0, 5) : '') }}" required>
   @error('office_start_time')<div class="invalid-feedback">{{ $message }}</div>@enderror
 </div>
 <div class="mb-3">
-  <label class="form-label" for="office_end_time">Office End Time</label>
-  <input type="time" class="form-control @error('office_end_time') is-invalid @enderror" id="office_end_time" name="office_end_time" value="{{ old('office_end_time', isset($companySetting) ? \Illuminate\Support\Str::substr($companySetting->office_end_time, 0, 5) : '') }}">
+  <label class="form-label" for="office_end_time">Office End Time @include('partials.form.required-marker')</label>
+  <input type="time" class="form-control @error('office_end_time') is-invalid @enderror" id="office_end_time" name="office_end_time" value="{{ old('office_end_time', isset($companySetting) ? \Illuminate\Support\Str::substr($companySetting->office_end_time, 0, 5) : '') }}" required>
   @error('office_end_time')<div class="invalid-feedback">{{ $message }}</div>@enderror
 </div>
 <div class="mb-3">
-  <label class="form-label" for="working_hours_per_day">Working Hours Per Day</label>
-  <input type="number" class="form-control @error('working_hours_per_day') is-invalid @enderror" id="working_hours_per_day" name="working_hours_per_day" value="{{ old('working_hours_per_day', $companySetting->working_hours_per_day ?? 8) }}">
+  <label class="form-label" for="working_hours_per_day">Working Hours Per Day @include('partials.form.required-marker')</label>
+  <input type="number" min="1" max="24" class="form-control @error('working_hours_per_day') is-invalid @enderror" id="working_hours_per_day" name="working_hours_per_day" value="{{ old('working_hours_per_day', $companySetting->working_hours_per_day ?? 8) }}" required>
   @error('working_hours_per_day')<div class="invalid-feedback">{{ $message }}</div>@enderror
 </div>
 <div class="form-check mb-3">
@@ -31,3 +31,7 @@
 </div>
 
 @include('partials.form.searchable-select-assets')
+
+@push('scripts')
+    <script src="{{ asset('assets/js/company-setting-form.js') }}"></script>
+@endpush

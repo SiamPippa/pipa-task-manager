@@ -35,6 +35,6 @@ class TaskAssignmentPolicy extends BasePolicy
             return true;
         }
 
-        return $user->role === UserRole::GENERAL && $assignment->user_id === $user->id;
+        return $user->actingRole() === UserRole::GENERAL && $assignment->user_id === $user->id;
     }
 }

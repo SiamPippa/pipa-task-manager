@@ -91,11 +91,13 @@ class TeamService extends BaseService implements TeamServiceInterface
     {
         $user = $this->userRepository->find($userId);
 
-        if (! $user || in_array($user->role, [UserRole::ADMIN, UserRole::DEPARTMENT_HEAD], true)) {
+        if (! $user || $user->hasRole(UserRole::ADMIN) || $user->hasRole(UserRole::DEPARTMENT_HEAD)) {
             return;
         }
 
-        $this->userRepository->update($userId, ['role' => UserRole::TEAM_LEAD]);
+        if (! $user->hasRole(UserRole::TEAM_LEAD)) {
+            $user->userRoles()->create(['role' => UserRole::TEAM_LEAD]);
+        }
     }
 
     private function revertTeamLeadRoleIfNeeded(int $userId): void
@@ -106,10 +108,14 @@ class TeamService extends BaseService implements TeamServiceInterface
 
         $user = $this->userRepository->find($userId);
 
-        if (! $user || $user->role !== UserRole::TEAM_LEAD) {
+        if (! $user || ! $user->hasRole(UserRole::TEAM_LEAD)) {
             return;
         }
 
-        $this->userRepository->update($userId, ['role' => UserRole::GENERAL]);
+        $user->userRoles()->where('role', UserRole::TEAM_LEAD)->delete();
+
+        if ($user->roleIds() === []) {
+            $user->userRoles()->create(['role' => UserRole::GENERAL]);
+        }
     }
 }

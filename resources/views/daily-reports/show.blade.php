@@ -16,6 +16,7 @@
       <dl class="row mb-0">
         <dt class="col-sm-3">User</dt><dd class="col-sm-9">{{ $dailyReport->user?->name ?? '-' }}</dd>
         <dt class="col-sm-3">Project</dt><dd class="col-sm-9">{{ $dailyReport->project?->name ?? '-' }}</dd>
+        <dt class="col-sm-3">Module</dt><dd class="col-sm-9">{{ $dailyReport->module?->name ?? '-' }}</dd>
         <dt class="col-sm-3">Task</dt><dd class="col-sm-9">{{ $dailyReport->task?->title ?? '-' }}</dd>
         <dt class="col-sm-3">Report Date</dt><dd class="col-sm-9">{{ $dailyReport->report_date?->format('Y-m-d') ?? '-' }}</dd>
         <dt class="col-sm-3">Summary</dt><dd class="col-sm-9">{{ $dailyReport->summary }}</dd>

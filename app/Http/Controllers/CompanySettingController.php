@@ -31,7 +31,7 @@ class CompanySettingController extends Controller
             'canCreateSetting' => $this->companiesWithoutSettings()->isNotEmpty(),
             'filterFields' => $this->scopedFilterFields([
                 ['type' => 'text', 'name' => 'search', 'label' => 'Search', 'placeholder' => 'Company name or code', 'col' => 4],
-                ['type' => 'select', 'name' => 'company_id', 'label' => 'Company', 'placeholder' => 'All companies', 'col' => 4, 'options' => $this->companyService->all()],
+                ['type' => 'select', 'name' => 'company_id', 'label' => 'Company', 'placeholder' => 'All companies', 'col' => 4, 'options' => $this->companyService->allActive()],
             ]),
         ]);
     }
@@ -83,7 +83,7 @@ class CompanySettingController extends Controller
 
         return view('company-settings.edit', [
             'companySetting' => $companySetting,
-            'companies' => $this->scopedForCompany($this->companyService->all()),
+            'companies' => $this->scopedForCompany($this->companyService->allActive()),
         ]);
     }
 
@@ -93,7 +93,7 @@ class CompanySettingController extends Controller
             ->when($exceptCompanyId, fn ($query) => $query->where('company_id', '!=', $exceptCompanyId))
             ->pluck('company_id');
 
-        return $this->scopedForCompany($this->companyService->all())
+        return $this->scopedForCompany($this->companyService->allActive())
             ->reject(fn ($company) => $existingCompanyIds->contains($company->id))
             ->values();
     }

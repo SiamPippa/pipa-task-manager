@@ -16,6 +16,7 @@ class DailyReport extends Model
     protected $fillable = [
         'user_id',
         'project_id',
+        'project_module_id',
         'task_id',
         'report_date',
         'summary',
@@ -30,11 +31,11 @@ class DailyReport extends Model
 
     public function scopeVisibleTo(Builder $query, User $user): Builder
     {
-        if ($user->role === UserRole::ADMIN) {
+        if ($user->actingRole() === UserRole::ADMIN) {
             return $query;
         }
 
-        if ($user->role === UserRole::DEPARTMENT_HEAD && $user->department_id) {
+        if ($user->actingRole() === UserRole::DEPARTMENT_HEAD && $user->department_id) {
             return $query->where(function (Builder $reportQuery) use ($user) {
                 $reportQuery
                     ->whereHas('project', fn (Builder $projectQuery) => $projectQuery->where('department_id', $user->department_id))
@@ -42,7 +43,7 @@ class DailyReport extends Model
             });
         }
 
-        if (in_array($user->role, [UserRole::TEAM_PRODUCT_MANAGER, UserRole::TEAM_LEAD], true)) {
+        if (in_array($user->actingRole(), [UserRole::TEAM_PRODUCT_MANAGER, UserRole::TEAM_LEAD], true)) {
             $teamIds = $user->teams()->pluck('teams.id');
 
             return $query->whereHas('user.teams', fn (Builder $teamQuery) => $teamQuery->whereIn('teams.id', $teamIds));
@@ -64,6 +65,11 @@ class DailyReport extends Model
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function module(): BelongsTo
+    {
+        return $this->belongsTo(ProjectModule::class, 'project_module_id');
     }
 
     public function task(): BelongsTo

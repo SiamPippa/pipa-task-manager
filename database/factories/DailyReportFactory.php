@@ -21,6 +21,7 @@ class DailyReportFactory extends Factory
         return [
             'user_id' => User::factory(),
             'project_id' => Project::factory(),
+            'project_module_id' => 1,
             'task_id' => Task::factory(),
             'report_date' => $this->faker->dateTimeBetween('-3 months', 'now'),
             'summary' => $this->faker->randomElement(RealisticData::REPORT_SUMMARIES),

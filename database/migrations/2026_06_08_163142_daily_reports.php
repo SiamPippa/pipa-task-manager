@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('user_id');
             $table->integer('project_id');
+            $table->unsignedBigInteger('project_module_id');
             $table->integer('task_id');
             $table->date('report_date');
             $table->text('summary')->nullable();
