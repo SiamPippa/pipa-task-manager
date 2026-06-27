@@ -33,7 +33,7 @@ return [
             Permission::DAILY_REPORTS_MANAGE,
         ],
 
-        UserRole::TEAM_PRODUCT_MANAGER => [
+        UserRole::MANAGER => [
             Permission::PROJECTS_VIEW,
             Permission::TEAMS_VIEW,
             Permission::PROJECT_TEAM_ASSIGNMENTS_MANAGE,

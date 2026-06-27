@@ -169,8 +169,8 @@ class CompanySettingValidationTest extends TestCase
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('company_settings', [
             'company_id' => $company->id,
-            'office_start_time' => '09:00:00',
-            'office_end_time' => '18:00:00',
+            'office_start_time' => '09:00',
+            'office_end_time' => '18:00',
         ]);
     }
 

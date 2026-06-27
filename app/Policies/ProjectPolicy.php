@@ -44,6 +44,10 @@ class ProjectPolicy extends BasePolicy
             return $this->sameCompany($user, $project) && $this->sameDepartment($user, $project);
         }
 
+        if ($user->actingRole() === UserRole::MANAGER) {
+            return $this->sameCompany($user, $project) && $this->sameDepartment($user, $project);
+        }
+
         return false;
     }
 }

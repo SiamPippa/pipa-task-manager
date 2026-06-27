@@ -238,7 +238,7 @@ class DesignationUniquenessTest extends TestCase
         $response->assertRedirect(route('designations.index'));
         $this->assertDatabaseHas('designations', [
             'id' => $designation->id,
-            'title' => 'Manager',
+            'title' => 'manager',
             'code' => 'MGR001',
         ]);
     }

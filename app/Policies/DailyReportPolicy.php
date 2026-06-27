@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Enums\Permission;
+use App\Enums\UserRole;
 use App\Models\DailyReport;
 use App\Models\User;
 
@@ -33,6 +34,12 @@ class DailyReportPolicy extends BasePolicy
         }
 
         if ($this->allows($user, Permission::DAILY_REPORTS_MANAGE)) {
+            if ($user->actingRole() === UserRole::MANAGER) {
+                $dailyReport->loadMissing('project');
+
+                return $dailyReport->project && $this->sameDepartment($user, $dailyReport->project);
+            }
+
             return true;
         }
 

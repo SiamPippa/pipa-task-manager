@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
@@ -32,7 +33,7 @@ class CompanyContext
             $filters['company_id'] = $companyId;
         }
 
-        if ($departmentId = self::departmentId($user)) {
+        if (! self::canSelectDepartment($user) && ($departmentId = self::departmentId($user))) {
             $filters['department_id'] = $departmentId;
         }
 
@@ -45,9 +46,15 @@ class CompanyContext
             return $fields;
         }
 
+        $hidden = ['company_id'];
+
+        if (! self::canSelectDepartment($user)) {
+            $hidden[] = 'department_id';
+        }
+
         return array_values(array_filter(
             $fields,
-            fn (array $field) => ! in_array($field['name'] ?? null, ['company_id', 'department_id'], true)
+            fn (array $field) => ! in_array($field['name'] ?? null, $hidden, true)
         ));
     }
 
@@ -62,7 +69,9 @@ class CompanyContext
 
     public static function canSelectDepartment(?User $user = null): bool
     {
-        return self::canSelectCompany($user);
+        $user ??= auth()->user();
+
+        return self::canSelectCompany($user) || self::hasCompanyWideDepartmentSelection($user);
     }
 
     public static function departmentId(?User $user = null): ?int
@@ -108,5 +117,12 @@ class CompanyContext
 
             return $itemCompanyId !== null && (int) $itemCompanyId === (int) $companyId;
         })->values();
+    }
+
+    private static function hasCompanyWideDepartmentSelection(?User $user = null): bool
+    {
+        $user ??= auth()->user();
+
+        return in_array($user?->actingRole(), [UserRole::MANAGER, UserRole::DEPARTMENT_HEAD], true);
     }
 }

@@ -39,13 +39,27 @@ class Project extends Model
             return $query;
         }
 
-        if (! $user->company_id || ! $user->department_id) {
+        if (! $user->company_id) {
             return $query->whereRaw('1 = 0');
         }
 
-        return $query
-            ->where('company_id', $user->company_id)
-            ->where('department_id', $user->department_id);
+        $query->where('company_id', $user->company_id);
+
+        if (in_array($user->actingRole(), [UserRole::MANAGER, UserRole::DEPARTMENT_HEAD], true)) {
+            return $query;
+        }
+
+        if (! $user->department_id) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        $query->where('department_id', $user->department_id);
+
+        if ($user->actingRole() === UserRole::GENERAL) {
+            return $query->assignedToUserTeams($user);
+        }
+
+        return $query;
     }
 
     public function scopeAssignedToUserTeams(Builder $query, User $user): Builder

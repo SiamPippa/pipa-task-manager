@@ -38,6 +38,10 @@ class ProjectModulePolicy extends BasePolicy
             return $module->project && $this->sameCompany($user, $module->project) && $this->sameDepartment($user, $module->project);
         }
 
+        if ($user->actingRole() === UserRole::MANAGER) {
+            return $module->project && $this->canMutateInOwnDepartment($user, $module->project);
+        }
+
         return false;
     }
 

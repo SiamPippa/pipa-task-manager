@@ -26,12 +26,28 @@ class TaskAssignmentPolicy extends BasePolicy
 
     public function update(User $user, TaskAssignment $assignment): bool
     {
-        return $this->create($user) && $assignment->isVisibleTo($user);
+        if (! $this->create($user) || ! $assignment->isVisibleTo($user)) {
+            return false;
+        }
+
+        if ($user->actingRole() === UserRole::MANAGER) {
+            $assignment->loadMissing('task.project');
+
+            return $assignment->task?->project && $this->sameDepartment($user, $assignment->task->project);
+        }
+
+        return true;
     }
 
     public function delete(User $user, TaskAssignment $assignment): bool
     {
         if ($this->create($user) && $assignment->isVisibleTo($user)) {
+            if ($user->actingRole() === UserRole::MANAGER) {
+                $assignment->loadMissing('task.project');
+
+                return $assignment->task?->project && $this->sameDepartment($user, $assignment->task->project);
+            }
+
             return true;
         }
 

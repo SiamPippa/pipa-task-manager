@@ -8,7 +8,7 @@ class UserRole
 
     public const DEPARTMENT_HEAD = 2;
 
-    public const TEAM_PRODUCT_MANAGER = 3;
+    public const MANAGER = 3;
 
     public const TEAM_LEAD = 4;
 
@@ -19,7 +19,7 @@ class UserRole
         return [
             self::ADMIN => 'Admin',
             self::DEPARTMENT_HEAD => 'Department Head',
-            self::TEAM_PRODUCT_MANAGER => 'Team Product Manager',
+            self::MANAGER => 'Manager',
             self::TEAM_LEAD => 'Team Lead',
             self::GENERAL => 'General User',
         ];

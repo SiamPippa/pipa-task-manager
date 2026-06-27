@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\TaskType;
+use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,6 +33,14 @@ class Task extends Model
 
     public function scopeVisibleTo(Builder $query, User $user): Builder
     {
+        if ($user->actingRole() === UserRole::GENERAL) {
+            return $query->where(function (Builder $taskQuery) use ($user) {
+                $taskQuery
+                    ->whereHas('project', fn (Builder $projectQuery) => $projectQuery->visibleTo($user))
+                    ->orWhereHas('assignees', fn (Builder $userQuery) => $userQuery->where('users.id', $user->id));
+            });
+        }
+
         return $query->whereHas('project', fn (Builder $projectQuery) => $projectQuery->visibleTo($user));
     }
 

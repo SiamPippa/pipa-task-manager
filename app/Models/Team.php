@@ -37,6 +37,10 @@ class Team extends Model
 
         $query->where('company_id', $user->company_id);
 
+        if ($user->actingRole() === UserRole::MANAGER) {
+            return $query;
+        }
+
         if (Rbac::allows($user, Permission::TEAMS_MANAGE)) {
             return $user->department_id
                 ? $query->where('department_id', $user->department_id)

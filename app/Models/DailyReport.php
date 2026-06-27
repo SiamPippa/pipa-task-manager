@@ -43,7 +43,14 @@ class DailyReport extends Model
             });
         }
 
-        if (in_array($user->actingRole(), [UserRole::TEAM_PRODUCT_MANAGER, UserRole::TEAM_LEAD], true)) {
+        if ($user->actingRole() === UserRole::MANAGER && $user->company_id) {
+            return $query->whereHas(
+                'project',
+                fn (Builder $projectQuery) => $projectQuery->where('company_id', $user->company_id)
+            );
+        }
+
+        if ($user->actingRole() === UserRole::TEAM_LEAD) {
             $teamIds = $user->teams()->pluck('teams.id');
 
             return $query->whereHas('user.teams', fn (Builder $teamQuery) => $teamQuery->whereIn('teams.id', $teamIds));

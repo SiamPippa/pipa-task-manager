@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Enums\Permission;
+use App\Enums\UserRole;
 use App\Models\ProjectTeamAssignment;
 use App\Models\User;
 
@@ -25,7 +26,17 @@ class ProjectTeamAssignmentPolicy extends BasePolicy
 
     public function update(User $user, ProjectTeamAssignment $assignment): bool
     {
-        return $this->create($user) && $assignment->isVisibleTo($user);
+        if (! $this->create($user) || ! $assignment->isVisibleTo($user)) {
+            return false;
+        }
+
+        if ($user->actingRole() === UserRole::MANAGER) {
+            $assignment->loadMissing('project');
+
+            return $assignment->project && $this->sameDepartment($user, $assignment->project);
+        }
+
+        return true;
     }
 
     public function delete(User $user, ProjectTeamAssignment $assignment): bool

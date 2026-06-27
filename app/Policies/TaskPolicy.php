@@ -31,6 +31,10 @@ class TaskPolicy extends BasePolicy
         }
 
         if ($this->allows($user, Permission::TASKS_MANAGE)) {
+            if (in_array($user->actingRole(), [UserRole::MANAGER, UserRole::DEPARTMENT_HEAD], true)) {
+                return $task->project && $this->sameDepartment($user, $task->project);
+            }
+
             return true;
         }
 
@@ -52,6 +56,10 @@ class TaskPolicy extends BasePolicy
         }
 
         if ($user->actingRole() === UserRole::DEPARTMENT_HEAD) {
+            return $task->project && $this->sameDepartment($user, $task->project);
+        }
+
+        if ($user->actingRole() === UserRole::MANAGER) {
             return $task->project && $this->sameDepartment($user, $task->project);
         }
 
