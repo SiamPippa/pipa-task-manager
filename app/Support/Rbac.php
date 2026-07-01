@@ -12,23 +12,7 @@ class Rbac
 {
     public static function allows(User $user, string $permission): bool
     {
-        $role = $user->actingRole();
-
-        if ($role === UserRole::ADMIN) {
-            return true;
-        }
-
-        $permissions = config('rbac.roles.'.$role, []);
-
-        if (in_array('*', $permissions, true)) {
-            return true;
-        }
-
-        if (in_array($permission, $permissions, true)) {
-            return true;
-        }
-
-        return self::impliesViewPermission($permissions, $permission);
+        return $user->actingCan($permission);
     }
 
     public static function inSameCompany(User $user, Model $model): bool
@@ -44,41 +28,32 @@ class Rbac
         return $companyId !== null && (int) $companyId === (int) $user->company_id;
     }
 
-    public static function inSameDepartment(User $user, Model $model): bool
-    {
-        if (ActiveRole::isAdmin($user)) {
-            return true;
-        }
-
-        if (! $user->department_id || ! isset($model->department_id)) {
-            return false;
-        }
-
-        return (int) $model->department_id === (int) $user->department_id;
-    }
-
     public static function canManageOrganization(User $user): bool
     {
         return self::allows($user, Permission::ORGANIZATION_ACCESS);
     }
 
-    public static function roleHasPermission(int $role, string $permission): bool
+    public static function roleHasPermission(string|int $role, string $permission): bool
     {
-        if ($role === UserRole::ADMIN) {
+        $role = UserRole::normalize($role);
+
+        if ($role === UserRole::SUPER_ADMIN) {
             return true;
         }
 
-        $permissions = config('rbac.roles.'.$role, []);
+        $spatieRole = \Spatie\Permission\Models\Role::query()
+            ->with('permissions')
+            ->where('name', $role)
+            ->first();
 
-        if (in_array('*', $permissions, true)) {
+        if ($spatieRole?->hasPermissionTo($permission)) {
             return true;
         }
 
-        if (in_array($permission, $permissions, true)) {
-            return true;
-        }
-
-        return self::impliesViewPermission($permissions, $permission);
+        return $spatieRole !== null && str_ends_with($permission, '.view')
+            && $spatieRole->permissions->contains(
+                fn ($granted) => str_starts_with($granted->name, substr($permission, 0, -5).'.')
+            );
     }
 
     /**
@@ -116,20 +91,4 @@ class Rbac
         return $matrix;
     }
 
-    private static function impliesViewPermission(array $permissions, string $permission): bool
-    {
-        if (! str_ends_with($permission, '.view')) {
-            return false;
-        }
-
-        $resource = substr($permission, 0, -5);
-
-        foreach ($permissions as $granted) {
-            if (str_starts_with($granted, $resource.'.')) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

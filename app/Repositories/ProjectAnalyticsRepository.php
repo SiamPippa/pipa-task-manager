@@ -23,7 +23,7 @@ class ProjectAnalyticsRepository implements ProjectAnalyticsRepositoryInterface
     {
         $filters = $this->normalizeFilters($filters);
         $projects = $this->baseProjectQuery($filters)
-            ->with(['department:id,name', 'company:id,name'])
+            ->with(['company:id,name'])
             ->orderBy('name')
             ->get();
 
@@ -116,7 +116,7 @@ class ProjectAnalyticsRepository implements ProjectAnalyticsRepositoryInterface
     {
         $filters = $this->normalizeFilters($filters);
         $project = $this->baseProjectQuery($filters)
-            ->with(['department:id,name', 'company:id,name', 'assignedTeams.members:id,name'])
+            ->with(['company:id,name', 'assignedTeams.members:id,name'])
             ->whereKey($projectId)
             ->first();
 
@@ -130,7 +130,6 @@ class ProjectAnalyticsRepository implements ProjectAnalyticsRepositoryInterface
         return array_merge(
             $this->formatProjectRow($project, $metrics),
             [
-                'department_name' => $project->department?->name,
                 'company_name' => $project->company?->name,
                 'assigned_members_list' => $metrics['assigned_members_list'],
                 'active_contributors_list' => $metrics['active_contributors_list'],
@@ -338,7 +337,7 @@ class ProjectAnalyticsRepository implements ProjectAnalyticsRepositoryInterface
 
     private function baseProjectQuery(array $filters): Builder
     {
-        $query = Project::query()->with(['department:id,name', 'company:id,name']);
+        $query = Project::query()->with(['company:id,name']);
 
         if ($viewer = $this->resolveViewer($filters)) {
             $query->visibleTo($viewer);
@@ -346,10 +345,6 @@ class ProjectAnalyticsRepository implements ProjectAnalyticsRepositoryInterface
 
         if (filled($filters['company_id'] ?? null)) {
             $query->where('company_id', $filters['company_id']);
-        }
-
-        if (filled($filters['department_id'] ?? null)) {
-            $query->where('department_id', $filters['department_id']);
         }
 
         if (filled($filters['project_id'] ?? null)) {
@@ -570,7 +565,6 @@ class ProjectAnalyticsRepository implements ProjectAnalyticsRepositoryInterface
             'risk_level' => $riskLevel,
             'risk_label' => ProjectMetricsCalculator::riskLabel($riskLevel),
             'risk_class' => ProjectMetricsCalculator::riskBadgeClass($riskLevel),
-            'department_name' => $project->department?->name,
             'company_name' => $project->company?->name,
             ...$metrics,
         ];

@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Enums\UserRole;
 use App\Models\Company;
-use App\Models\Department;
 use App\Models\Designation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -85,9 +84,8 @@ class DesignationCompanySelectionTest extends TestCase
     public function test_locked_user_cannot_create_designation_under_inactive_company(): void
     {
         $inactiveCompany = Company::factory()->inactive()->create();
-        $department = Department::factory()->create(['company_id' => $inactiveCompany->id]);
-        $user = User::factory()->forOrganization($inactiveCompany, $department)->create();
-        $user->syncRoles([UserRole::DEPARTMENT_HEAD]);
+        $user = User::factory()->forOrganization($inactiveCompany)->create();
+        $user->syncRoles([UserRole::COMPANY_ADMIN]);
 
         $response = $this->actingAs($user)->post(route('designations.store'), [
             'title' => 'Operations Lead',
@@ -147,7 +145,7 @@ class DesignationCompanySelectionTest extends TestCase
     private function adminUser(Company $company): User
     {
         $user = User::factory()->forOrganization($company)->create();
-        $user->syncRoles([UserRole::ADMIN]);
+        $user->syncRoles([UserRole::SUPER_ADMIN]);
 
         return $user;
     }

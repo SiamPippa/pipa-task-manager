@@ -46,19 +46,21 @@
     </li>
     @endcan
 
-    <li class="menu-item {{ request()->routeIs('departments.*') ? 'active' : '' }}">
-      <a href="{{ route('departments.index') }}" class="menu-link">
-        <i class="menu-icon tf-icons bx bx-sitemap"></i>
-        <div>Departments</div>
-      </a>
-    </li>
-
     <li class="menu-item {{ request()->routeIs('designations.*') ? 'active' : '' }}">
       <a href="{{ route('designations.index') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-id-card"></i>
         <div>Designations</div>
       </a>
     </li>
+
+    @can('viewAny', App\Models\OfficeLocation::class)
+    <li class="menu-item {{ request()->routeIs('office-locations.*') ? 'active' : '' }}">
+      <a href="{{ route('office-locations.index') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-map"></i>
+        <div>Office Locations</div>
+      </a>
+    </li>
+    @endcan
 
     <li class="menu-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
       <a href="{{ route('users.index') }}" class="menu-link">
@@ -137,6 +139,15 @@
       <a href="{{ route('project-tasks.index') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-task"></i>
         <div>Tasks</div>
+      </a>
+    </li>
+    @endcan
+
+    @can('viewAny', App\Models\TimeLog::class)
+    <li class="menu-item {{ request()->routeIs('time-logs.*') ? 'active' : '' }}">
+      <a href="{{ route('time-logs.index') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-time"></i>
+        <div>Time Logs</div>
       </a>
     </li>
     @endcan

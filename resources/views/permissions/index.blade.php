@@ -9,7 +9,7 @@
   <div class="card">
     <div class="card-header">
       <h5 class="mb-0">Role-Based Access Control</h5>
-      <p class="text-muted mb-0 mt-1">Permission matrix for all roles. Scoped access (company, department, team) is enforced in policies.</p>
+      <p class="text-muted mb-0 mt-1">Permission matrix for all roles. Scoped access (company, project, team, and ownership) is enforced in policies.</p>
     </div>
     <div class="table-responsive text-nowrap">
       <table class="table table-bordered table-hover mb-0">

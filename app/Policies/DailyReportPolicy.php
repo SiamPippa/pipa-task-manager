@@ -34,10 +34,11 @@ class DailyReportPolicy extends BasePolicy
         }
 
         if ($this->allows($user, Permission::DAILY_REPORTS_MANAGE)) {
-            if ($user->actingRole() === UserRole::MANAGER) {
+            if ($user->actingRole() === UserRole::PROJECT_MANAGER) {
                 $dailyReport->loadMissing('project');
 
-                return $dailyReport->project && $this->sameDepartment($user, $dailyReport->project);
+                return $dailyReport->project
+                    && $dailyReport->project->managers()->where('users.id', $user->id)->exists();
             }
 
             return true;

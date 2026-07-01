@@ -24,7 +24,6 @@ class TeamRepository extends BaseRepository implements TeamRepositoryInterface
         }
 
         $this->applyExactFilter($query, 'company_id', $filters['company_id'] ?? null);
-        $this->applyExactFilter($query, 'department_id', $filters['department_id'] ?? null);
         $this->applyExactFilter($query, 'team_lead_id', $filters['team_lead_id'] ?? null);
         $this->applySearchFilter($query, $filters['search'] ?? null, ['name', 'code']);
         $this->applyBooleanFilter($query, 'status', $filters['status'] ?? null);

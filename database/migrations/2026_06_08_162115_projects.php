@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->integer('company_id');
-            $table->unsignedBigInteger('department_id');
             $table->string('client_name')->nullable();
             $table->text('description')->nullable();
             $table->date('start_date')->nullable();
@@ -25,7 +24,7 @@ return new class extends Migration
             $table->string('status')->default('active');
             $table->timestamps();
 
-            $table->unique(['company_id', 'department_id', 'name'], 'projects_company_department_name_unique');
+            $table->unique(['company_id', 'name'], 'projects_company_name_unique');
         });
     }
 

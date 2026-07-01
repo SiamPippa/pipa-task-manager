@@ -20,14 +20,15 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'company_id' => ['required', 'integer', 'exists:companies,id'],
-            'department_id' => ['nullable', 'integer', 'exists:departments,id'],
+            'employee_id' => ['nullable', 'string', 'max:255'],
             'designation_id' => ['nullable', 'integer', 'exists:designations,id'],
             'reporting_manager_id' => ['nullable', 'integer', 'exists:users,id'],
+            'office_location_id' => ['nullable', 'integer', 'exists:office_locations,id'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
             'roles' => ['required', 'array', 'min:1'],
-            'roles.*' => ['integer', Rule::in(UserRole::values())],
+            'roles.*' => ['string', Rule::in(UserRole::values())],
             'status' => ['sometimes', 'boolean'],
         ];
     }

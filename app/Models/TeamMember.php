@@ -14,7 +14,13 @@ class TeamMember extends Model
         'team_id',
         'user_id',
         'company_id',
-        'department_id',
+        'is_team_lead',
+        'status',
+    ];
+
+    protected $casts = [
+        'is_team_lead' => 'boolean',
+        'status' => 'boolean',
     ];
 
     public function team(): BelongsTo
@@ -32,8 +38,4 @@ class TeamMember extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function department(): BelongsTo
-    {
-        return $this->belongsTo(Department::class);
-    }
 }

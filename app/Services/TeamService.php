@@ -9,6 +9,7 @@ use App\Enums\UserRole;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class TeamService extends BaseService implements TeamServiceInterface
 {
@@ -21,9 +22,11 @@ class TeamService extends BaseService implements TeamServiceInterface
 
     public function create(array $data): Model
     {
-        $memberIds = $this->extractMemberIds($data);
+        $members = $this->extractMembers($data);
+        $this->applyTeamLeadId($data, $members);
+
         $team = parent::create($data);
-        $this->syncMembers($team, $memberIds);
+        $this->syncMembers($team, $members);
         $this->assignTeamLeadRole($team->team_lead_id);
 
         return $team->load(['members', 'teamLead']);
@@ -33,10 +36,11 @@ class TeamService extends BaseService implements TeamServiceInterface
     {
         $team = $this->findOrFail($id);
         $previousLeadId = $team->team_lead_id;
-        $memberIds = $this->extractMemberIds($data);
+        $members = $this->extractMembers($data);
+        $this->applyTeamLeadId($data, $members);
 
         $team = parent::update($id, $data);
-        $this->syncMembers($team, $memberIds);
+        $this->syncMembers($team, $members);
 
         if ($previousLeadId !== $team->team_lead_id) {
             $this->revertTeamLeadRoleIfNeeded($previousLeadId);
@@ -61,28 +65,51 @@ class TeamService extends BaseService implements TeamServiceInterface
         return true;
     }
 
-    private function extractMemberIds(array &$data): array
+    private function extractMembers(array &$data): array
     {
-        $memberIds = $data['member_ids'] ?? [];
-        unset($data['member_ids']);
+        $members = $data['members'] ?? [];
+        unset($data['members'], $data['member_ids'], $data['team_lead_id']);
 
-        return array_values(array_unique(array_map('intval', $memberIds)));
+        return collect($members)
+            ->map(fn (array $member) => [
+                'user_id' => (int) $member['user_id'],
+                'is_team_lead' => (bool) ($member['is_team_lead'] ?? false),
+                'status' => (bool) ($member['status'] ?? true),
+            ])
+            ->values()
+            ->all();
     }
 
-    private function syncMembers(Team $team, array $memberIds): void
+    private function applyTeamLeadId(array &$data, array $members): void
     {
-        $memberIds = array_values(array_unique(array_merge($memberIds, [$team->team_lead_id])));
+        $lead = collect($members)->firstWhere('is_team_lead', true);
+        $data['team_lead_id'] = $lead['user_id'] ?? null;
+    }
+
+    private function syncMembers(Team $team, array $members): void
+    {
+        $userIds = Arr::pluck($members, 'user_id');
 
         $users = $this->userRepository->filterQuery()
-            ->whereIn('id', $memberIds)
-            ->get(['id', 'company_id', 'department_id']);
+            ->whereIn('id', $userIds)
+            ->get(['id', 'company_id']);
 
-        $syncData = $users->mapWithKeys(fn (User $user) => [
-            $user->id => [
-                'company_id' => $user->company_id,
-                'department_id' => $user->department_id,
-            ],
-        ])->all();
+        $usersById = $users->keyBy('id');
+
+        $syncData = collect($members)
+            ->filter(fn (array $member) => $usersById->has($member['user_id']))
+            ->mapWithKeys(function (array $member) use ($usersById) {
+                $user = $usersById->get($member['user_id']);
+
+                return [
+                    $user->id => [
+                        'company_id' => $user->company_id,
+                        'is_team_lead' => $member['is_team_lead'],
+                        'status' => $member['status'],
+                    ],
+                ];
+            })
+            ->all();
 
         $team->members()->sync($syncData);
     }
@@ -91,12 +118,12 @@ class TeamService extends BaseService implements TeamServiceInterface
     {
         $user = $this->userRepository->find($userId);
 
-        if (! $user || $user->hasRole(UserRole::ADMIN) || $user->hasRole(UserRole::DEPARTMENT_HEAD)) {
+        if (! $user || $user->hasRole(UserRole::SUPER_ADMIN) || $user->hasRole(UserRole::COMPANY_ADMIN)) {
             return;
         }
 
         if (! $user->hasRole(UserRole::TEAM_LEAD)) {
-            $user->userRoles()->create(['role' => UserRole::TEAM_LEAD]);
+            $user->assignRole(UserRole::TEAM_LEAD);
         }
     }
 
@@ -106,16 +133,27 @@ class TeamService extends BaseService implements TeamServiceInterface
             return;
         }
 
+        $isLeadOnPivot = Team::query()
+            ->whereHas('members', function ($query) use ($userId) {
+                $query->where('users.id', $userId)
+                    ->where('team_members.is_team_lead', true);
+            })
+            ->exists();
+
+        if ($isLeadOnPivot) {
+            return;
+        }
+
         $user = $this->userRepository->find($userId);
 
         if (! $user || ! $user->hasRole(UserRole::TEAM_LEAD)) {
             return;
         }
 
-        $user->userRoles()->where('role', UserRole::TEAM_LEAD)->delete();
+        $user->removeRole(UserRole::TEAM_LEAD);
 
         if ($user->roleIds() === []) {
-            $user->userRoles()->create(['role' => UserRole::GENERAL]);
+            $user->assignRole(UserRole::DEVELOPER);
         }
     }
 }

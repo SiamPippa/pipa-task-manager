@@ -15,8 +15,8 @@
     <div class="card-body">
       <dl class="row mb-0">
         <dt class="col-sm-3">Company</dt><dd class="col-sm-9">{{ $project->company?->name ?? '-' }}</dd>
-        <dt class="col-sm-3">Department</dt><dd class="col-sm-9">{{ $project->department?->name ?? '-' }}</dd>
         <dt class="col-sm-3">Name</dt><dd class="col-sm-9">{{ $project->name }}</dd>
+        <dt class="col-sm-3">Project Managers</dt><dd class="col-sm-9">{{ $project->managers->pluck('name')->join(', ') ?: '-' }}</dd>
         <dt class="col-sm-3">Client</dt><dd class="col-sm-9">{{ $project->client_name ?? '-' }}</dd>
         <dt class="col-sm-3">Code</dt><dd class="col-sm-9">{{ $project->code }}</dd>
         <dt class="col-sm-3">Description</dt><dd class="col-sm-9">{{ $project->description ?: '-' }}</dd>

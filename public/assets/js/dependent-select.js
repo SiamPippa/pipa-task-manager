@@ -230,27 +230,6 @@ $(function () {
             });
     }
 
-    function bootstrapLockedCompanyFields() {
-        $("form").each(function () {
-            const $form = $(this);
-            const companyId = getFieldValue("company_id", $form);
-
-            if (!companyId || !getDependentSelects("company_id", $form).length) {
-                return;
-            }
-
-            const $companySelect = $form.find('select[name="company_id"]');
-            const hasLockedCompany =
-                $companySelect.length === 0 ||
-                $companySelect.is(":disabled") ||
-                $companySelect.is("[data-fixed-company]");
-
-            if (hasLockedCompany) {
-                onParentChange("company_id", $form);
-            }
-        });
-    }
-
     $("form").on("submit", function () {
         $(this)
             .find("select.searchable-select:disabled")
@@ -280,6 +259,4 @@ $(function () {
             }
         }
     });
-
-    bootstrapLockedCompanyFields();
 });

@@ -12,7 +12,7 @@ class EnsureActiveRole
     public function handle(Request $request, Closure $next): Response
     {
         if ($user = $request->user()) {
-            $user->loadMissing('userRoles');
+            $user->loadMissing('roles');
             ActiveRole::resolve($user);
         }
 

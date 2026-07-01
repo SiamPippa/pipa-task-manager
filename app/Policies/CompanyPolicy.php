@@ -21,16 +21,17 @@ class CompanyPolicy extends BasePolicy
 
     public function create(User $user): bool
     {
-        return $user->actingRole() === UserRole::ADMIN;
+        return $user->actingRole() === UserRole::SUPER_ADMIN;
     }
 
     public function update(User $user, Company $company): bool
     {
-        return $user->actingRole() === UserRole::ADMIN;
+        return $user->actingRole() === UserRole::SUPER_ADMIN
+            || ($user->actingRole() === UserRole::COMPANY_ADMIN && $this->sameCompany($user, $company));
     }
 
     public function delete(User $user, Company $company): bool
     {
-        return $user->actingRole() === UserRole::ADMIN;
+        return $user->actingRole() === UserRole::SUPER_ADMIN;
     }
 }

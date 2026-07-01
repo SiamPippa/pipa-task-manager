@@ -18,7 +18,6 @@ class Team extends Model
 
     protected $fillable = [
         'company_id',
-        'department_id',
         'team_lead_id',
         'name',
         'code',
@@ -31,20 +30,18 @@ class Team extends Model
 
     public function scopeVisibleTo(Builder $query, User $user): Builder
     {
-        if ($user->actingRole() === UserRole::ADMIN) {
+        if ($user->actingRole() === UserRole::SUPER_ADMIN) {
             return $query;
         }
 
         $query->where('company_id', $user->company_id);
 
-        if ($user->actingRole() === UserRole::MANAGER) {
+        if ($user->actingRole() === UserRole::COMPANY_ADMIN) {
             return $query;
         }
 
         if (Rbac::allows($user, Permission::TEAMS_MANAGE)) {
-            return $user->department_id
-                ? $query->where('department_id', $user->department_id)
-                : $query->whereRaw('1 = 0');
+            return $query;
         }
 
         if (Rbac::allows($user, Permission::TEAMS_MANAGE_LED)) {
@@ -72,11 +69,6 @@ class Team extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function department(): BelongsTo
-    {
-        return $this->belongsTo(Department::class);
-    }
-
     public function teamLead(): BelongsTo
     {
         return $this->belongsTo(User::class, 'team_lead_id');
@@ -85,7 +77,7 @@ class Team extends Model
     public function members(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'team_members')
-            ->withPivot(['company_id', 'department_id'])
+            ->withPivot(['company_id', 'is_team_lead', 'status'])
             ->withTimestamps();
     }
 

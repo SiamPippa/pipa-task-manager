@@ -19,7 +19,6 @@
             <th>Name</th>
             <th>Email</th>
             <th>Company</th>
-            <th>Department</th>
             <th>Assigned Roles</th>
             <th>Update Roles</th>
           </tr>
@@ -30,7 +29,6 @@
             <td>{{ $item->name ?? '-' }}</td>
             <td>{{ $item->email ?? '-' }}</td>
             <td>{{ $item->company?->name ?? '-' }}</td>
-            <td>{{ $item->department?->name ?? '-' }}</td>
             <td>{{ $item->assignedRoleLabels() }}</td>
             <td>
               <form action="{{ route('user-roles.update', $item) }}" method="POST" class="d-flex gap-2 align-items-center">

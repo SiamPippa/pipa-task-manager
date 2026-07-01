@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Enums\UserRole;
 use App\Models\Company;
-use App\Models\Department;
 use App\Models\Project;
 use App\Models\ProjectModule;
 use App\Models\Task;
@@ -44,8 +43,7 @@ class TaskHistoryFlowTest extends TestCase
     {
         [$task, $assignment] = $this->taskWithAssignment();
         $company = Company::query()->findOrFail($task->project->company_id);
-        $department = Department::query()->findOrFail($task->project->department_id);
-        $otherUser = $this->userWithRole($company, $department, UserRole::GENERAL);
+        $otherUser = $this->userWithRole($company, UserRole::DEVELOPER);
 
         $response = $this->actingAs($otherUser)->patch(
             route('task-assignments.task-status.update', $assignment),
@@ -62,11 +60,10 @@ class TaskHistoryFlowTest extends TestCase
     public function test_task_assignment_actions_are_written_to_task_history(): void
     {
         $company = Company::factory()->active()->create();
-        $department = Department::factory()->create(['company_id' => $company->id]);
-        $manager = $this->userWithRole($company, $department, UserRole::TEAM_LEAD);
-        $assigneeA = $this->userWithRole($company, $department, UserRole::GENERAL);
-        $assigneeB = $this->userWithRole($company, $department, UserRole::GENERAL);
-        $task = $this->createTask($company, $department, 'todo');
+        $manager = $this->userWithRole($company, UserRole::COMPANY_ADMIN);
+        $assigneeA = $this->userWithRole($company, UserRole::DEVELOPER);
+        $assigneeB = $this->userWithRole($company, UserRole::DEVELOPER);
+        $task = $this->createTask($company, 'todo');
 
         $store = $this->actingAs($manager)->post(route('task-assignments.store'), [
             'task_id' => $task->id,
@@ -105,10 +102,9 @@ class TaskHistoryFlowTest extends TestCase
     private function taskWithAssignment(): array
     {
         $company = Company::factory()->active()->create();
-        $department = Department::factory()->create(['company_id' => $company->id]);
-        $task = $this->createTask($company, $department, 'todo');
-        $assignee = $this->userWithRole($company, $department, UserRole::GENERAL);
-        $manager = $this->userWithRole($company, $department, UserRole::TEAM_LEAD);
+        $task = $this->createTask($company, 'todo');
+        $assignee = $this->userWithRole($company, UserRole::DEVELOPER);
+        $manager = $this->userWithRole($company, UserRole::COMPANY_ADMIN);
 
         $assignment = TaskAssignment::query()->create([
             'task_id' => $task->id,
@@ -120,11 +116,10 @@ class TaskHistoryFlowTest extends TestCase
         return [$task, $assignment, $assignee, $manager];
     }
 
-    private function createTask(Company $company, Department $department, string $status): Task
+    private function createTask(Company $company, string $status): Task
     {
         $project = Project::factory()->create([
             'company_id' => $company->id,
-            'department_id' => $department->id,
         ]);
 
         $module = ProjectModule::query()->firstOrCreate(
@@ -144,9 +139,9 @@ class TaskHistoryFlowTest extends TestCase
         ]);
     }
 
-    private function userWithRole(Company $company, Department $department, int $role): User
+    private function userWithRole(Company $company, string|int $role): User
     {
-        $user = User::factory()->forOrganization($company, $department)->create();
+        $user = User::factory()->forOrganization($company)->create(['status' => true]);
         $user->syncRoles([$role]);
 
         return $user;

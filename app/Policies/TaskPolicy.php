@@ -31,14 +31,14 @@ class TaskPolicy extends BasePolicy
         }
 
         if ($this->allows($user, Permission::TASKS_MANAGE)) {
-            if (in_array($user->actingRole(), [UserRole::MANAGER, UserRole::DEPARTMENT_HEAD], true)) {
-                return $task->project && $this->sameDepartment($user, $task->project);
+            if ($user->actingRole() === UserRole::PROJECT_MANAGER) {
+                return $task->project && $task->project->managers()->where('users.id', $user->id)->exists();
             }
 
             return true;
         }
 
-        if ($user->actingRole() === UserRole::GENERAL) {
+        if (in_array($user->actingRole(), [UserRole::DEVELOPER, UserRole::QA], true)) {
             return $task->assignees()->where('users.id', $user->id)->exists();
         }
 
@@ -51,16 +51,16 @@ class TaskPolicy extends BasePolicy
             return false;
         }
 
-        if ($user->actingRole() === UserRole::ADMIN) {
+        if ($user->actingRole() === UserRole::SUPER_ADMIN) {
             return true;
         }
 
-        if ($user->actingRole() === UserRole::DEPARTMENT_HEAD) {
-            return $task->project && $this->sameDepartment($user, $task->project);
+        if ($user->actingRole() === UserRole::COMPANY_ADMIN) {
+            return $task->project && $this->sameCompany($user, $task->project);
         }
 
-        if ($user->actingRole() === UserRole::MANAGER) {
-            return $task->project && $this->sameDepartment($user, $task->project);
+        if ($user->actingRole() === UserRole::PROJECT_MANAGER) {
+            return $task->project && $task->project->managers()->where('users.id', $user->id)->exists();
         }
 
         return $this->view($user, $task);

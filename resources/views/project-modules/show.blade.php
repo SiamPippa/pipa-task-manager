@@ -15,7 +15,6 @@
     <div class="card-body">
       <dl class="row mb-0">
         <dt class="col-sm-3">Company</dt><dd class="col-sm-9">{{ $projectModule->project?->company?->name ?? '-' }}</dd>
-        <dt class="col-sm-3">Department</dt><dd class="col-sm-9">{{ $projectModule->project?->department?->name ?? '-' }}</dd>
         <dt class="col-sm-3">Project</dt><dd class="col-sm-9">{{ $projectModule->project?->name ?? '-' }}</dd>
         <dt class="col-sm-3">Module Name</dt><dd class="col-sm-9">{{ $projectModule->name }}</dd>
         <dt class="col-sm-3">Details</dt><dd class="col-sm-9">{{ $projectModule->details ?: '-' }}</dd>

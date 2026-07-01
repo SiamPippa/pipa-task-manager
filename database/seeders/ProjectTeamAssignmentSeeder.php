@@ -15,7 +15,7 @@ class ProjectTeamAssignmentSeeder extends Seeder
         $projects = Project::query()
             ->where('status', '!=', 'inactive')
             ->orderBy('id')
-            ->get(['id', 'company_id', 'department_id']);
+            ->get(['id', 'company_id']);
 
         if ($projects->isEmpty()) {
             return;
@@ -24,7 +24,6 @@ class ProjectTeamAssignmentSeeder extends Seeder
         foreach ($projects as $project) {
             $teams = Team::query()
                 ->where('company_id', $project->company_id)
-                ->where('department_id', $project->department_id)
                 ->where('status', true)
                 ->inRandomOrder()
                 ->take($faker->numberBetween(1, 2))

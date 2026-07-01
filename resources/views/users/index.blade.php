@@ -20,8 +20,8 @@
           <tr>
             <th>Name</th>
             <th>Email</th>
+            <th>Employee ID</th>
             <th>Company</th>
-            <th>Department</th>
             <th>Role</th>
             <th>Status</th>
             <th>Actions</th>
@@ -32,8 +32,8 @@
           <tr>
             <td>{{ $item->name ?? '-' }}</td>
             <td>{{ $item->email ?? '-' }}</td>
+            <td>{{ $item->employee_id ?? '-' }}</td>
             <td>{{ $item->company?->name ?? '-' }}</td>
-            <td>{{ $item->department?->name ?? '-' }}</td>
             <td>{{ $item->assignedRoleLabels() }}</td>
             <td>@if($item->status)<span class="badge bg-success">Active</span>@else<span class="badge bg-secondary">Inactive</span>@endif</td>
                         <td>

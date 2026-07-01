@@ -43,6 +43,10 @@ class TaskService extends BaseService implements TaskServiceInterface
             'description',
             'estimate_hours',
             'status',
+            'priority',
+            'due_date',
+            'qa_status',
+            'qa_comment',
         ]);
 
         $task = $this->repository->update($id, $this->prepareTaskData($data));

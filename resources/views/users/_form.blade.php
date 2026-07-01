@@ -21,21 +21,15 @@
     @if($user)<small class="text-muted">Leave blank to keep current password</small>@endif
     @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
   </div>
+  <div class="col-md-6 mb-3">
+    <label class="form-label" for="employee_id">Employee ID</label>
+    <input type="text" class="form-control @error('employee_id') is-invalid @enderror" id="employee_id" name="employee_id" value="{{ old('employee_id', $user?->employee_id) }}">
+    @error('employee_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+  </div>
   @include('partials.form.company-field', [
       'companies' => $companies,
       'selected' => $user?->company_id,
       'wrapperClass' => 'col-md-6 mb-3',
-  ])
-  @include('partials.form.searchable-select', [
-      'name' => 'department_id',
-      'label' => 'Department',
-      'placeholder' => 'Search department...',
-      'emptyOption' => 'None',
-      'options' => $departments,
-      'selected' => $user?->department_id,
-      'wrapperClass' => 'col-md-6 mb-3',
-      'dependsOn' => 'company_id',
-      'lookup' => 'departments',
   ])
   @include('partials.form.searchable-select', [
       'name' => 'designation_id',
@@ -48,6 +42,17 @@
       'wrapperClass' => 'col-md-6 mb-3',
       'dependsOn' => 'company_id',
       'lookup' => 'designations',
+  ])
+  @include('partials.form.searchable-select', [
+      'name' => 'office_location_id',
+      'label' => 'Office Location',
+      'placeholder' => 'Search office location...',
+      'emptyOption' => 'None',
+      'options' => $officeLocations,
+      'selected' => $user?->office_location_id,
+      'wrapperClass' => 'col-md-6 mb-3',
+      'dependsOn' => 'company_id',
+      'lookup' => 'office-locations',
   ])
   @include('partials.form.searchable-select', [
       'name' => 'reporting_manager_id',
@@ -67,7 +72,7 @@
       'placeholder' => 'Search roles...',
       'emptyOption' => false,
       'options' => $roles,
-      'selected' => old('roles', $user?->roleIds() ?? [UserRole::GENERAL]),
+      'selected' => old('roles', $user?->roleIds() ?? [UserRole::DEVELOPER]),
       'wrapperClass' => 'col-md-6 mb-3',
       'multiple' => true,
   ])

@@ -28,12 +28,6 @@ class ProjectTeamAssignmentRepository extends BaseRepository implements ProjectT
             });
         }
 
-        if (filled($filters['department_id'] ?? null)) {
-            $query->whereHas('project', function ($projectQuery) use ($filters) {
-                $projectQuery->where('department_id', $filters['department_id']);
-            });
-        }
-
         $this->applyExactFilter($query, 'project_id', $filters['project_id'] ?? null);
         $this->applyExactFilter($query, 'team_id', $filters['team_id'] ?? null);
 

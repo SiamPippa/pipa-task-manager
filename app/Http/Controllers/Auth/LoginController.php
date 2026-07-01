@@ -38,7 +38,7 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        $request->user()->load('userRoles');
+        $request->user()->load('roles');
         ActiveRole::resolve($request->user());
 
         return redirect()->intended(RouteServiceProvider::HOME);

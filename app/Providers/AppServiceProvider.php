@@ -5,7 +5,6 @@ namespace App\Providers;
 use App\Contracts\Repositories\CompanyRepositoryInterface;
 use App\Contracts\Repositories\CompanySettingRepositoryInterface;
 use App\Contracts\Repositories\DailyReportRepositoryInterface;
-use App\Contracts\Repositories\DepartmentRepositoryInterface;
 use App\Contracts\Repositories\DesignationRepositoryInterface;
 use App\Contracts\Repositories\ProjectAnalyticsRepositoryInterface;
 use App\Contracts\Repositories\ProjectModuleRepositoryInterface;
@@ -20,7 +19,6 @@ use App\Contracts\Services\AuthServiceInterface;
 use App\Contracts\Services\CompanyServiceInterface;
 use App\Contracts\Services\CompanySettingServiceInterface;
 use App\Contracts\Services\DailyReportServiceInterface;
-use App\Contracts\Services\DepartmentServiceInterface;
 use App\Contracts\Services\DesignationServiceInterface;
 use App\Contracts\Services\ProjectAnalyticsServiceInterface;
 use App\Contracts\Services\ProjectModuleServiceInterface;
@@ -34,7 +32,6 @@ use App\Contracts\Services\UserServiceInterface;
 use App\Repositories\CompanyRepository;
 use App\Repositories\CompanySettingRepository;
 use App\Repositories\DailyReportRepository;
-use App\Repositories\DepartmentRepository;
 use App\Repositories\DesignationRepository;
 use App\Repositories\ProjectAnalyticsRepository;
 use App\Repositories\ProjectModuleRepository;
@@ -49,7 +46,6 @@ use App\Services\AuthService;
 use App\Services\CompanyService;
 use App\Services\CompanySettingService;
 use App\Services\DailyReportService;
-use App\Services\DepartmentService;
 use App\Services\DesignationService;
 use App\Services\ProjectAnalyticsService;
 use App\Services\ProjectModuleService;
@@ -75,7 +71,6 @@ class AppServiceProvider extends ServiceProvider
             UserRepositoryInterface::class => UserRepository::class,
             CompanyRepositoryInterface::class => CompanyRepository::class,
             CompanySettingRepositoryInterface::class => CompanySettingRepository::class,
-            DepartmentRepositoryInterface::class => DepartmentRepository::class,
             TeamRepositoryInterface::class => TeamRepository::class,
             DesignationRepositoryInterface::class => DesignationRepository::class,
             ProjectRepositoryInterface::class => ProjectRepository::class,
@@ -91,7 +86,6 @@ class AppServiceProvider extends ServiceProvider
             UserServiceInterface::class => UserService::class,
             CompanyServiceInterface::class => CompanyService::class,
             CompanySettingServiceInterface::class => CompanySettingService::class,
-            DepartmentServiceInterface::class => DepartmentService::class,
             TeamServiceInterface::class => TeamService::class,
             DesignationServiceInterface::class => DesignationService::class,
             ProjectServiceInterface::class => ProjectService::class,

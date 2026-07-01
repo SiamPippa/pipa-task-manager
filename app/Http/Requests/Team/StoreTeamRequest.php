@@ -3,31 +3,35 @@
 namespace App\Http\Requests\Team;
 
 use App\Http\Requests\Concerns\EnforcesUserCompany;
+use App\Http\Requests\Concerns\ValidatesTeam;
+use App\Models\Team;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class StoreTeamRequest extends FormRequest
 {
     use EnforcesUserCompany;
+    use ValidatesTeam {
+        EnforcesUserCompany::prepareForValidation as enforceUserCompanyScope;
+    }
+
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->can('create', Team::class);
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->enforceUserCompanyScope();
+        $this->prepareTeamMembersForValidation();
     }
 
     public function rules(): array
     {
-        return [
-            'company_id' => ['required', 'integer', 'exists:companies,id'],
-            'department_id' => ['required', 'integer', 'exists:departments,id'],
-            'team_lead_id' => ['required', 'integer', 'exists:users,id'],
-            'member_ids' => ['nullable', 'array'],
-            'member_ids.*' => [
-                'integer',
-                Rule::exists('users', 'id')->where('company_id', $this->integer('company_id')),
-            ],
-            'name' => ['required', 'string', 'max:255'],
-            'code' => ['required', 'string', 'max:255'],
-            'status' => ['sometimes', 'boolean'],
-        ];
+        return $this->teamRules();
+    }
+
+    public function withValidator($validator): void
+    {
+        $this->validateTeamMembers($validator);
     }
 }

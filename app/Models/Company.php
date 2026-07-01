@@ -40,11 +40,6 @@ class Company extends Model
         return $this->hasMany(User::class);
     }
 
-    public function departments(): HasMany
-    {
-        return $this->hasMany(Department::class);
-    }
-
     public function teams(): HasMany
     {
         return $this->hasMany(Team::class);
@@ -58,6 +53,11 @@ class Company extends Model
     public function projects(): HasMany
     {
         return $this->hasMany(Project::class);
+    }
+
+    public function officeLocations(): HasMany
+    {
+        return $this->hasMany(OfficeLocation::class);
     }
 
     public function getLogoUrlAttribute(): ?string

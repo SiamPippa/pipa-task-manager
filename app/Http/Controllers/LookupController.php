@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
-use App\Models\Department;
 use App\Models\Designation;
+use App\Models\OfficeLocation;
 use App\Models\Project;
 use App\Models\ProjectModule;
 use App\Models\ProjectTeamAssignment;
@@ -22,10 +22,10 @@ class LookupController extends Controller
     {
         $items = match ($type) {
             'companies' => $this->companies($request),
-            'departments' => $this->departments($request),
             'teams' => $this->teams($request),
             'team-leads' => $this->teamLeads($request),
             'designations' => $this->designations($request),
+            'office-locations' => $this->officeLocations($request),
             'users' => $this->users($request),
             'projects' => $this->projects($request),
             'project-modules' => $this->projectModules($request),
@@ -63,25 +63,6 @@ class LookupController extends Controller
             ->all();
     }
 
-    private function departments(Request $request): array
-    {
-        $companyId = $this->resolveCompanyId($request);
-
-        if (! $companyId) {
-            return [];
-        }
-
-        return Department::query()
-            ->where('company_id', $companyId)
-            ->orderBy('name')
-            ->get(['id', 'name'])
-            ->map(fn (Department $department) => [
-                'id' => $department->id,
-                'label' => $department->name,
-            ])
-            ->all();
-    }
-
     private function teams(Request $request): array
     {
         $query = Team::query();
@@ -98,14 +79,9 @@ class LookupController extends Controller
             }
 
             $query
-                ->where('company_id', $project->company_id)
-                ->where('department_id', $project->department_id);
+                ->where('company_id', $project->company_id);
         } elseif ($companyId = $this->resolveCompanyId($request)) {
             $query->where('company_id', $companyId);
-
-            if ($request->filled('department_id')) {
-                $query->where('department_id', $request->integer('department_id'));
-            }
         } else {
             return [];
         }
@@ -130,10 +106,6 @@ class LookupController extends Controller
 
         if ($companyId = $this->resolveCompanyId($request)) {
             $query->where('company_id', $companyId);
-
-            if ($request->filled('department_id')) {
-                $query->where('department_id', $request->integer('department_id'));
-            }
         } elseif ($request->filled('company_id')) {
             $query->where('company_id', $request->integer('company_id'));
         } else {
@@ -205,14 +177,9 @@ class LookupController extends Controller
                 $query->where('company_id', $request->integer('company_id'));
             }
 
-            if ($request->filled('department_id')) {
-                $query->where('department_id', $request->integer('department_id'));
-            }
-
             if (
                 ! $this->resolveCompanyId($request)
                 && ! $request->filled('company_id')
-                && ! $request->filled('department_id')
             ) {
                 return [];
             }
@@ -227,6 +194,26 @@ class LookupController extends Controller
             ->map(fn (User $user) => [
                 'id' => $user->id,
                 'label' => $user->name,
+            ])
+            ->all();
+    }
+
+    private function officeLocations(Request $request): array
+    {
+        $companyId = $this->resolveCompanyId($request);
+
+        if (! $companyId) {
+            return [];
+        }
+
+        return OfficeLocation::query()
+            ->where('company_id', $companyId)
+            ->active()
+            ->orderBy('name')
+            ->get(['id', 'name'])
+            ->map(fn (OfficeLocation $location) => [
+                'id' => $location->id,
+                'label' => $location->name,
             ])
             ->all();
     }
@@ -261,10 +248,6 @@ class LookupController extends Controller
 
         if ($viewer = auth()->user()) {
             $query->visibleTo($viewer);
-        }
-
-        if ($request->filled('department_id')) {
-            $query->where('department_id', $request->integer('department_id'));
         }
 
         return $query

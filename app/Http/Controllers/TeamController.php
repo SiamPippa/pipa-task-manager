@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\Services\CompanyServiceInterface;
-use App\Contracts\Services\DepartmentServiceInterface;
 use App\Contracts\Services\TeamServiceInterface;
 use App\Contracts\Services\UserServiceInterface;
 use App\Http\Requests\Team\StoreTeamRequest;
@@ -19,7 +18,6 @@ class TeamController extends Controller
     public function __construct(
         private readonly TeamServiceInterface $teamService,
         private readonly CompanyServiceInterface $companyService,
-        private readonly DepartmentServiceInterface $departmentService,
         private readonly UserServiceInterface $userService
     ) {}
 
@@ -27,16 +25,15 @@ class TeamController extends Controller
     {
         $this->authorize('viewAny', Team::class);
 
-        $filters = $this->scopedFilters($request, ['search', 'company_id', 'department_id', 'project_id', 'status']);
+        $filters = $this->scopedFilters($request, ['search', 'company_id', 'project_id', 'status']);
         $filters['viewer_id'] = auth()->id();
 
         return view('teams.index', [
-            'teams' => $this->teamService->paginate($filters, 15, ['company', 'department', 'teamLead', 'members']),
+            'teams' => $this->teamService->paginate($filters, 15, ['company', 'teamLead', 'members']),
             'filters' => $filters,
             'filterFields' => $this->scopedFilterFields([
                 ['type' => 'text', 'name' => 'search', 'label' => 'Search', 'placeholder' => 'Name or code', 'col' => 3],
                 ['type' => 'select', 'name' => 'company_id', 'label' => 'Company', 'placeholder' => 'All companies', 'col' => 3, 'options' => $this->companyService->all()],
-                ['type' => 'select', 'name' => 'department_id', 'label' => 'Department', 'placeholder' => 'All departments', 'col' => 3, 'options' => $this->departmentService->all(), 'dependsOn' => 'company_id', 'lookup' => 'departments'],
                 ['type' => 'select', 'name' => 'project_id', 'label' => 'Project', 'placeholder' => 'All projects', 'col' => 3, 'options' => [], 'dependsOn' => 'company_id', 'lookup' => 'projects'],
                 ['type' => 'select', 'name' => 'status', 'label' => 'Status', 'placeholder' => 'All statuses', 'col' => 2, 'options' => FilterOptions::booleanStatus()],
             ]),
@@ -49,7 +46,6 @@ class TeamController extends Controller
 
         return view('teams.create', [
             'companies' => $this->scopedForCompany($this->companyService->all()),
-            'departments' => $this->scopedForCompany($this->departmentService->all()),
             'users' => $this->scopedForCompany($this->userService->all()),
         ]);
     }
@@ -69,7 +65,7 @@ class TeamController extends Controller
 
     public function show(int $team): View
     {
-        $team = $this->teamService->findOrFail($team, ['company', 'department', 'teamLead', 'members']);
+        $team = $this->teamService->findOrFail($team, ['company', 'teamLead', 'members']);
         $this->authorize('view', $team);
 
         return view('teams.show', [
@@ -85,7 +81,6 @@ class TeamController extends Controller
         return view('teams.edit', [
             'team' => $teamModel,
             'companies' => $this->scopedForCompany($this->companyService->all()),
-            'departments' => $this->scopedForCompany($this->departmentService->all()),
             'users' => $this->scopedForCompany($this->userService->all()),
         ]);
     }

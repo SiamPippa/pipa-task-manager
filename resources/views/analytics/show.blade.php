@@ -11,7 +11,7 @@
       <a href="{{ route('dashboard') }}" class="text-muted"><i class="bx bx-chevron-left"></i> Back to dashboard</a>
       <h4 class="mb-1 mt-2">{{ $project['name'] }}</h4>
       <p class="text-muted mb-0">
-        {{ $project['code'] }} · {{ $project['department_name'] ?? '-' }} · {{ $project['company_name'] ?? '-' }}
+        {{ $project['code'] }} · {{ $project['company_name'] ?? '-' }}
       </p>
     </div>
     <span class="badge {{ $project['display_status_class'] }} fs-6">{{ $project['display_status_label'] }}</span>

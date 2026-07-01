@@ -20,14 +20,15 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'company_id' => ['required', 'integer', 'exists:companies,id'],
-            'department_id' => ['nullable', 'integer', 'exists:departments,id'],
+            'employee_id' => ['nullable', 'string', 'max:255'],
             'designation_id' => ['nullable', 'integer', 'exists:designations,id'],
             'reporting_manager_id' => ['nullable', 'integer', 'exists:users,id', Rule::notIn([(int) $this->route('user')])],
+            'office_location_id' => ['nullable', 'integer', 'exists:office_locations,id'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->route('user'))],
             'password' => ['nullable', 'string', 'min:8'],
             'roles' => ['required', 'array', 'min:1'],
-            'roles.*' => ['integer', Rule::in(UserRole::values())],
+            'roles.*' => ['string', Rule::in(UserRole::values())],
             'status' => ['sometimes', 'boolean'],
         ];
     }

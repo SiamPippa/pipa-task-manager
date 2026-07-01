@@ -19,9 +19,9 @@
         <thead>
           <tr>
             <th>Company</th>
-            <th>Department</th>
             <th>Name</th>
             <th>Code</th>
+            <th>Project Managers</th>
             <th>Start</th>
             <th>End</th>
             <th>Total Hours</th>
@@ -33,9 +33,9 @@
           @forelse ($projects as $item)
           <tr>
             <td>{{ $item->company?->name ?? '-' }}</td>
-            <td>{{ $item->department?->name ?? '-' }}</td>
             <td>{{ $item->name ?? '-' }}</td>
             <td>{{ $item->code ?? '-' }}</td>
+            <td>{{ $item->managers->pluck('name')->join(', ') ?: '-' }}</td>
             <td>{{ $item->start_date?->format('Y-m-d') ?? '-' }}</td>
             <td>{{ $item->end_date?->format('Y-m-d') ?? '-' }}</td>
             <td>{{ $item->estimated_hours !== null ? number_format((float) $item->estimated_hours, 2) : '-' }}</td>

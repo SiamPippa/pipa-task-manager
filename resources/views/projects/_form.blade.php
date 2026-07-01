@@ -2,9 +2,16 @@
     'companies' => $companies,
     'selected' => $project->company_id ?? null,
 ])
-@include('partials.form.department-field', [
-    'departments' => $departments,
-    'selected' => $project->department_id ?? null,
+@include('partials.form.searchable-select', [
+    'name' => 'manager_ids[]',
+    'label' => 'Project Managers',
+    'placeholder' => 'Search project managers...',
+    'emptyOption' => false,
+    'options' => $managers,
+    'selected' => old('manager_ids', $project?->managers?->pluck('id')->all() ?? []),
+    'dependsOn' => 'company_id',
+    'lookup' => 'users',
+    'multiple' => true,
 ])
 <div class="mb-3">
   <label class="form-label" for="client_name">Client Name @include('partials.form.required-marker')</label>

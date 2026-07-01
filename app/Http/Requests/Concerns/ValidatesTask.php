@@ -39,6 +39,8 @@ trait ValidatesTask
             'type' => ['required', 'string', Rule::in(TaskType::values())],
             'description' => ['nullable', 'string'],
             'estimate_hours' => ['nullable', 'numeric', 'min:0'],
+            'priority' => ['required', 'string', 'in:low,medium,high,urgent'],
+            'due_date' => ['nullable', 'date'],
             'status' => ['required', 'string', 'in:todo,in_progress,done'],
         ];
     }

@@ -3000,3 +3000,42 @@
 2026/06/13 04:47:08 [notice] 1#1: start worker process 23
 2026/06/13 04:47:08 [notice] 1#1: start worker process 24
 2026/06/21 16:19:21 [error] 23#23: *4038 client intended to send too large body: 1312892 bytes, client: 172.18.0.1, server: localhost, request: "POST /companies/1 HTTP/1.1", host: "localhost:8000", referrer: "http://localhost:8000/companies/1/edit"
+2026/06/29 14:02:47 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2026/06/29 14:02:47 [notice] 20#20: gracefully shutting down
+2026/06/29 14:02:47 [notice] 22#22: gracefully shutting down
+2026/06/29 14:02:47 [notice] 21#21: gracefully shutting down
+2026/06/29 14:02:47 [notice] 23#23: gracefully shutting down
+2026/06/29 14:02:47 [notice] 24#24: gracefully shutting down
+2026/06/29 14:02:47 [notice] 20#20: exiting
+2026/06/29 14:02:47 [notice] 24#24: exiting
+2026/06/29 14:02:47 [notice] 23#23: exiting
+2026/06/29 14:02:47 [notice] 21#21: exiting
+2026/06/29 14:02:47 [notice] 22#22: exiting
+2026/06/29 14:02:47 [notice] 20#20: exit
+2026/06/29 14:02:47 [notice] 24#24: exit
+2026/06/29 14:02:47 [notice] 23#23: exit
+2026/06/29 14:02:47 [notice] 21#21: exit
+2026/06/29 14:02:47 [notice] 22#22: exit
+2026/06/29 14:02:47 [notice] 1#1: signal 17 (SIGCHLD) received from 22
+2026/06/29 14:02:47 [notice] 1#1: worker process 22 exited with code 0
+2026/06/29 14:02:47 [notice] 1#1: signal 29 (SIGIO) received
+2026/06/29 14:02:47 [notice] 1#1: signal 17 (SIGCHLD) received from 21
+2026/06/29 14:02:47 [notice] 1#1: worker process 21 exited with code 0
+2026/06/29 14:02:47 [notice] 1#1: worker process 24 exited with code 0
+2026/06/29 14:02:47 [notice] 1#1: signal 29 (SIGIO) received
+2026/06/29 14:02:47 [notice] 1#1: signal 17 (SIGCHLD) received from 24
+2026/06/29 14:02:47 [notice] 1#1: signal 17 (SIGCHLD) received from 23
+2026/06/29 14:02:47 [notice] 1#1: worker process 20 exited with code 0
+2026/06/29 14:02:47 [notice] 1#1: worker process 23 exited with code 0
+2026/06/29 14:02:47 [notice] 1#1: exit
+2026/07/01 03:43:59 [notice] 1#1: using the "epoll" event method
+2026/07/01 03:43:59 [notice] 1#1: nginx/1.29.7
+2026/07/01 03:43:59 [notice] 1#1: built by gcc 15.2.0 (Alpine 15.2.0) 
+2026/07/01 03:43:59 [notice] 1#1: OS: Linux 5.15.49-linuxkit
+2026/07/01 03:43:59 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2026/07/01 03:43:59 [notice] 1#1: start worker processes
+2026/07/01 03:43:59 [notice] 1#1: start worker process 20
+2026/07/01 03:43:59 [notice] 1#1: start worker process 21
+2026/07/01 03:43:59 [notice] 1#1: start worker process 22
+2026/07/01 03:43:59 [notice] 1#1: start worker process 23
+2026/07/01 03:43:59 [notice] 1#1: start worker process 24

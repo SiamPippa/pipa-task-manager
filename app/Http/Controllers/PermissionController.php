@@ -7,6 +7,7 @@ use App\Enums\UserRole;
 use App\Support\Rbac;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
 
 class PermissionController extends Controller
 {
@@ -21,13 +22,19 @@ class PermissionController extends Controller
         ]);
     }
 
-    public function show(int $role): View
+    public function show(string $role): View
     {
         Gate::authorize('view-rbac');
 
         abort_unless(isset(UserRole::labels()[$role]), 404);
 
-        $rolePermissions = config('rbac.roles.'.$role, []);
+        $rolePermissions = Role::query()
+            ->with('permissions')
+            ->where('name', $role)
+            ->firstOrFail()
+            ->permissions
+            ->pluck('name')
+            ->all();
 
         return view('permissions.show', [
             'roleId' => $role,
