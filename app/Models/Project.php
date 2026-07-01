@@ -16,7 +16,6 @@ class Project extends Model
 
     protected $fillable = [
         'company_id',
-        'department_id',
         'client_name',
         'description',
         'start_date',
@@ -35,7 +34,7 @@ class Project extends Model
 
     public function scopeVisibleTo(Builder $query, User $user): Builder
     {
-        if ($user->actingRole() === UserRole::ADMIN) {
+        if ($user->actingRole() === UserRole::SUPER_ADMIN) {
             return $query;
         }
 
@@ -45,17 +44,15 @@ class Project extends Model
 
         $query->where('company_id', $user->company_id);
 
-        if (in_array($user->actingRole(), [UserRole::MANAGER, UserRole::DEPARTMENT_HEAD], true)) {
+        if ($user->actingRole() === UserRole::COMPANY_ADMIN) {
             return $query;
         }
 
-        if (! $user->department_id) {
-            return $query->whereRaw('1 = 0');
+        if ($user->actingRole() === UserRole::PROJECT_MANAGER) {
+            return $query->whereHas('managers', fn (Builder $managerQuery) => $managerQuery->where('users.id', $user->id));
         }
 
-        $query->where('department_id', $user->department_id);
-
-        if ($user->actingRole() === UserRole::GENERAL) {
+        if (in_array($user->actingRole(), [UserRole::TEAM_LEAD, UserRole::DEVELOPER, UserRole::QA, UserRole::VIEWER], true)) {
             return $query->assignedToUserTeams($user);
         }
 
@@ -81,16 +78,6 @@ class Project extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function department(): BelongsTo
-    {
-        return $this->belongsTo(Department::class);
-    }
-
-    public function teams(): HasMany
-    {
-        return $this->hasMany(Team::class);
-    }
-
     public function projectTeamAssignments(): HasMany
     {
         return $this->hasMany(ProjectTeamAssignment::class);
@@ -99,6 +86,13 @@ class Project extends Model
     public function assignedTeams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class, 'project_team_assignments')
+            ->withPivot(['assigned_by', 'assigned_at'])
+            ->withTimestamps();
+    }
+
+    public function managers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'project_managers')
             ->withPivot(['assigned_by', 'assigned_at'])
             ->withTimestamps();
     }

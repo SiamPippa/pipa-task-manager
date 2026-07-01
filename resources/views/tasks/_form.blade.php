@@ -56,6 +56,24 @@
   <input type="number" step="0.01" class="form-control @error('estimate_hours') is-invalid @enderror" id="estimate_hours" name="estimate_hours" value="{{ old('estimate_hours', $task?->estimate_hours ?? '') }}">
   @error('estimate_hours')<div class="invalid-feedback">{{ $message }}</div>@enderror
 </div>
+<div class="row">
+  <div class="col-md-6">
+    @include('partials.form.searchable-select', [
+        'name' => 'priority',
+        'label' => 'Priority',
+        'required' => true,
+        'placeholder' => 'Search priority...',
+        'emptyOption' => false,
+        'options' => collect(['low', 'medium', 'high', 'urgent'])->map(fn ($s) => (object) ['id' => $s, 'name' => ucfirst($s)]),
+        'selected' => old('priority', $task?->priority ?? 'medium'),
+    ])
+  </div>
+  <div class="col-md-6 mb-3">
+    <label class="form-label" for="due_date">Due Date</label>
+    <input type="date" class="form-control @error('due_date') is-invalid @enderror" id="due_date" name="due_date" value="{{ old('due_date', $task?->due_date?->format('Y-m-d') ?? '') }}">
+    @error('due_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
+  </div>
+</div>
 @include('partials.form.searchable-select', [
     'name' => 'status',
     'label' => 'Status',

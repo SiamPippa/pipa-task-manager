@@ -30,10 +30,11 @@ class ProjectTeamAssignmentPolicy extends BasePolicy
             return false;
         }
 
-        if ($user->actingRole() === UserRole::MANAGER) {
+        if ($user->actingRole() === UserRole::PROJECT_MANAGER) {
             $assignment->loadMissing('project');
 
-            return $assignment->project && $this->sameDepartment($user, $assignment->project);
+            return $assignment->project
+                && $assignment->project->managers()->where('users.id', $user->id)->exists();
         }
 
         return true;

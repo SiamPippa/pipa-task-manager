@@ -18,12 +18,20 @@ class ProjectService extends BaseService implements ProjectServiceInterface
 
     public function create(array $data): Model
     {
-        return parent::create($this->withEstimatedHours($data));
+        $managerIds = $this->extractManagerIds($data);
+        $project = parent::create($this->withEstimatedHours($data));
+        $this->syncManagers($project, $managerIds);
+
+        return $project;
     }
 
     public function update(int $id, array $data): Model
     {
-        return parent::update($id, $this->withEstimatedHours($data));
+        $managerIds = $this->extractManagerIds($data);
+        $project = parent::update($id, $this->withEstimatedHours($data));
+        $this->syncManagers($project, $managerIds);
+
+        return $project;
     }
 
     private function withEstimatedHours(array $data): array
@@ -39,5 +47,25 @@ class ProjectService extends BaseService implements ProjectServiceInterface
         );
 
         return $data;
+    }
+
+    private function extractManagerIds(array &$data): array
+    {
+        $managerIds = array_map('intval', $data['manager_ids'] ?? []);
+        unset($data['manager_ids']);
+
+        return array_values(array_unique(array_filter($managerIds)));
+    }
+
+    private function syncManagers(Model $project, array $managerIds): void
+    {
+        $syncData = collect($managerIds)
+            ->mapWithKeys(fn (int $userId) => [$userId => [
+                'assigned_by' => auth()->id(),
+                'assigned_at' => now(),
+            ]])
+            ->all();
+
+        $project->managers()->sync($syncData);
     }
 }

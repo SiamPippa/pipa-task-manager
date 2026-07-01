@@ -27,10 +27,6 @@ class ProjectModuleRepository extends BaseRepository implements ProjectModuleRep
             $query->whereHas('project', fn ($projectQuery) => $projectQuery->where('company_id', $filters['company_id']));
         }
 
-        if (filled($filters['department_id'] ?? null)) {
-            $query->whereHas('project', fn ($projectQuery) => $projectQuery->where('department_id', $filters['department_id']));
-        }
-
         $this->applyExactFilter($query, 'project_id', $filters['project_id'] ?? null);
         $this->applySearchFilter($query, $filters['search'] ?? null, ['name']);
     }

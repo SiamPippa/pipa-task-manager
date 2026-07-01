@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\Services\CompanyServiceInterface;
-use App\Contracts\Services\DepartmentServiceInterface;
 use App\Contracts\Services\UserServiceInterface;
 use App\Enums\UserRole;
 use App\Http\Requests\User\AssignUserRoleRequest;
@@ -17,24 +16,22 @@ class UserRoleController extends Controller
 {
     public function __construct(
         private readonly UserServiceInterface $userService,
-        private readonly CompanyServiceInterface $companyService,
-        private readonly DepartmentServiceInterface $departmentService
+        private readonly CompanyServiceInterface $companyService
     ) {}
 
     public function index(Request $request): View
     {
         Gate::authorize('assign-user-roles');
 
-        $filters = $this->scopedFilters($request, ['search', 'company_id', 'department_id', 'role']);
+        $filters = $this->scopedFilters($request, ['search', 'company_id', 'role']);
 
         return view('user-roles.index', [
-            'users' => $this->userService->paginate($filters, 15, ['company', 'department', 'userRoles']),
+            'users' => $this->userService->paginate($filters, 15, ['company', 'roles']),
             'filters' => $filters,
             'roles' => UserRole::labels(),
             'filterFields' => $this->scopedFilterFields([
                 ['type' => 'text', 'name' => 'search', 'label' => 'Search', 'placeholder' => 'Name or email', 'col' => 3],
                 ['type' => 'select', 'name' => 'company_id', 'label' => 'Company', 'placeholder' => 'All companies', 'col' => 2, 'options' => $this->companyService->all()],
-                ['type' => 'select', 'name' => 'department_id', 'label' => 'Department', 'placeholder' => 'All departments', 'col' => 2, 'options' => $this->departmentService->all(), 'dependsOn' => 'company_id', 'lookup' => 'departments'],
                 ['type' => 'select', 'name' => 'role', 'label' => 'Role', 'placeholder' => 'All roles', 'col' => 2, 'options' => FilterOptions::userRoles()],
             ]),
         ]);
@@ -44,11 +41,11 @@ class UserRoleController extends Controller
     {
         Gate::authorize('assign-user-roles');
 
-        $userModel = $this->userService->findOrFail($user, ['userRoles']);
-        $roles = array_map('intval', $request->validated('roles'));
+        $userModel = $this->userService->findOrFail($user, ['roles']);
+        $roles = array_map(fn ($role) => UserRole::normalize($role), $request->validated('roles'));
 
-        if ($userModel->id === auth()->id() && $userModel->hasRole(UserRole::ADMIN) && ! in_array(UserRole::ADMIN, $roles, true)) {
-            return back()->with('error', 'You cannot remove your own admin role.');
+        if ($userModel->id === auth()->id() && $userModel->hasRole(UserRole::SUPER_ADMIN) && ! in_array(UserRole::SUPER_ADMIN, $roles, true)) {
+            return back()->with('error', 'You cannot remove your own super admin role.');
         }
 
         $this->userService->update($user, ['roles' => $roles]);

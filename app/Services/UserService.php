@@ -18,7 +18,7 @@ class UserService extends BaseService implements UserServiceInterface
     public function create(array $data): Model
     {
         $data = $this->normalizeOptionalFields($data);
-        $roles = $this->extractRoles($data) ?? [UserRole::GENERAL];
+        $roles = $this->extractRoles($data) ?? [UserRole::DEVELOPER];
 
         if (! empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
@@ -27,7 +27,7 @@ class UserService extends BaseService implements UserServiceInterface
         $user = parent::create($data);
         $user->syncRoles($roles);
 
-        return $user->load('userRoles');
+        return $user->load('roles');
     }
 
     public function update(int $id, array $data): Model
@@ -47,12 +47,12 @@ class UserService extends BaseService implements UserServiceInterface
             $user->syncRoles($roles);
         }
 
-        return $user->load('userRoles');
+        return $user->load('roles');
     }
 
     protected function normalizeOptionalFields(array $data): array
     {
-        foreach (['department_id', 'designation_id', 'reporting_manager_id'] as $field) {
+        foreach (['designation_id', 'reporting_manager_id', 'office_location_id'] as $field) {
             if (array_key_exists($field, $data) && $data[$field] === '') {
                 $data[$field] = null;
             }
@@ -62,19 +62,19 @@ class UserService extends BaseService implements UserServiceInterface
     }
 
     /**
-     * @return array<int, int>|null
+     * @return array<int, string>|null
      */
     private function extractRoles(array &$data): ?array
     {
         if (array_key_exists('roles', $data)) {
-            $roles = array_map('intval', $data['roles'] ?? []);
+            $roles = array_map(fn ($role) => UserRole::normalize($role), $data['roles'] ?? []);
             unset($data['roles']);
 
             return $roles;
         }
 
         if (array_key_exists('role', $data)) {
-            $role = (int) $data['role'];
+            $role = UserRole::normalize($data['role']);
             unset($data['role']);
 
             return [$role];

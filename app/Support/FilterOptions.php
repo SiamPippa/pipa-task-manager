@@ -56,7 +56,7 @@ class FilterOptions
     public static function userRoles(): array
     {
         return collect(UserRole::labels())
-            ->map(fn (string $label, int $value) => ['value' => (string) $value, 'label' => $label])
+            ->map(fn (string $label, string $value) => ['value' => $value, 'label' => $label])
             ->values()
             ->all();
     }
@@ -64,7 +64,7 @@ class FilterOptions
     public static function userRoleOptions(): array
     {
         return collect(UserRole::labels())
-            ->map(fn (string $label, int $value) => (object) ['id' => $value, 'name' => $label])
+            ->map(fn (string $label, string $value) => (object) ['id' => $value, 'name' => $label])
             ->values()
             ->all();
     }
@@ -73,12 +73,12 @@ class FilterOptions
     {
         $roles = UserRole::labels();
 
-        if ($actor->actingRole() !== UserRole::ADMIN) {
-            unset($roles[UserRole::ADMIN]);
+        if ($actor->actingRole() !== UserRole::SUPER_ADMIN) {
+            unset($roles[UserRole::SUPER_ADMIN]);
         }
 
         return collect($roles)
-            ->map(fn (string $label, int $value) => (object) ['id' => $value, 'name' => $label])
+            ->map(fn (string $label, string $value) => (object) ['id' => $value, 'name' => $label])
             ->values()
             ->all();
     }

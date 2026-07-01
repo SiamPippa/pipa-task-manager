@@ -13,7 +13,6 @@ return new class extends Migration
             $table->unsignedBigInteger('team_id');
             $table->unsignedBigInteger('user_id');
             $table->integer('company_id');
-            $table->integer('department_id')->nullable();
             $table->timestamps();
 
             $table->unique(['team_id', 'user_id']);

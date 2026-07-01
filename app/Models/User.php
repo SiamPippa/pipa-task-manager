@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Enums\UserRole;
 use App\Support\ActiveRole;
-use App\Support\Rbac;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -12,16 +11,22 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, HasRoles {
+        HasRoles::hasRole as protected spatieHasRole;
+        HasRoles::syncRoles as protected spatieSyncRoles;
+    }
+    use Notifiable;
 
     protected $fillable = [
         'company_id',
-        'department_id',
+        'employee_id',
         'designation_id',
         'reporting_manager_id',
+        'office_location_id',
         'name',
         'email',
         'password',
@@ -42,11 +47,6 @@ class User extends Authenticatable
         return $this->belongsTo(Company::class);
     }
 
-    public function department(): BelongsTo
-    {
-        return $this->belongsTo(Department::class);
-    }
-
     public function designation(): BelongsTo
     {
         return $this->belongsTo(Designation::class);
@@ -62,11 +62,6 @@ class User extends Authenticatable
         return $this->hasMany(User::class, 'reporting_manager_id');
     }
 
-    public function userRoles(): HasMany
-    {
-        return $this->hasMany(UserRoleAssignment::class);
-    }
-
     public function ledTeams(): HasMany
     {
         return $this->hasMany(Team::class, 'team_lead_id');
@@ -75,7 +70,19 @@ class User extends Authenticatable
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class, 'team_members', 'user_id', 'team_id')
-            ->withPivot(['company_id', 'department_id'])
+            ->withPivot(['company_id', 'is_team_lead', 'status'])
+            ->withTimestamps();
+    }
+
+    public function officeLocation(): BelongsTo
+    {
+        return $this->belongsTo(OfficeLocation::class);
+    }
+
+    public function managedProjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Project::class, 'project_managers')
+            ->withPivot(['assigned_by', 'assigned_at'])
             ->withTimestamps();
     }
 
@@ -107,23 +114,28 @@ class User extends Authenticatable
     }
 
     /**
-     * @return array<int, int>
+     * @return array<int, string>
      */
     public function roleIds(): array
     {
-        if ($this->relationLoaded('userRoles')) {
-            return $this->userRoles->pluck('role')->map(fn ($role) => (int) $role)->all();
+        return $this->getRoleNames()
+            ->map(fn (string $role) => UserRole::normalize($role))
+            ->values()
+            ->all();
+    }
+
+    public function hasRole($roles, ?string $guard = null): bool
+    {
+        if (is_array($roles)) {
+            $roles = array_map(fn ($role) => UserRole::normalize($role), $roles);
+        } else {
+            $roles = UserRole::normalize($roles);
         }
 
-        return $this->userRoles()->pluck('role')->map(fn ($role) => (int) $role)->all();
+        return $this->spatieHasRole($roles, $guard);
     }
 
-    public function hasRole(int $role): bool
-    {
-        return in_array($role, $this->roleIds(), true);
-    }
-
-    public function actingRole(): int
+    public function actingRole(): string
     {
         return ActiveRole::resolve($this);
     }
@@ -136,45 +148,71 @@ class User extends Authenticatable
     public function assignedRoleLabels(): string
     {
         return collect($this->roleIds())
-            ->map(fn (int $role) => UserRole::label($role))
+            ->map(fn (string $role) => UserRole::label($role))
             ->join(', ');
     }
 
     /**
-     * @param  array<int, int>  $roles
+     * @param  array<int, string|int>  $roles
      */
     public function syncRoles(array $roles): void
     {
-        $roles = array_values(array_unique(array_map('intval', $roles)));
+        $roles = array_values(array_unique(array_map(fn ($role) => UserRole::normalize($role), $roles)));
 
         if ($roles === []) {
-            $roles = [UserRole::GENERAL];
+            $roles = [UserRole::DEVELOPER];
         }
 
-        $this->userRoles()->whereNotIn('role', $roles)->delete();
+        if (\Spatie\Permission\Models\Permission::query()->count() === 0) {
+            app(\Database\Seeders\RolesAndPermissionsSeeder::class)->run();
+        }
 
         foreach ($roles as $role) {
-            $this->userRoles()->firstOrCreate(['role' => $role]);
+            \Spatie\Permission\Models\Role::findOrCreate($role);
         }
 
-        $this->unsetRelation('userRoles');
+        $this->spatieSyncRoles($roles);
+        $this->unsetRelation('roles');
 
         if ($this->is(auth()->user())) {
             $active = session(ActiveRole::SESSION_KEY);
 
-            if ($active === null || ! in_array((int) $active, $roles, true)) {
-                ActiveRole::set($this, min($roles));
+            if ($active === null || ! in_array(UserRole::normalize($active), $roles, true)) {
+                ActiveRole::set($this, ActiveRole::defaultFrom($roles));
             }
         }
     }
 
     public function canManageOrganization(): bool
     {
-        return Rbac::canManageOrganization($this);
+        return $this->actingCan(\App\Enums\Permission::ORGANIZATION_ACCESS);
     }
 
     public function hasPermission(string $permission): bool
     {
-        return Rbac::allows($this, $permission);
+        return $this->actingCan($permission);
+    }
+
+    public function actingCan(string $permission): bool
+    {
+        if ($this->actingRole() === UserRole::SUPER_ADMIN) {
+            return true;
+        }
+
+        $role = $this->roles->firstWhere('name', $this->actingRole())
+            ?? $this->roles()->where('name', $this->actingRole())->first();
+
+        if (! $role) {
+            return false;
+        }
+
+        if ($role->hasPermissionTo($permission)) {
+            return true;
+        }
+
+        return str_ends_with($permission, '.view')
+            && $role->permissions->contains(
+                fn ($granted) => str_starts_with($granted->name, substr($permission, 0, -5).'.')
+            );
     }
 }

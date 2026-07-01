@@ -30,10 +30,11 @@ class TaskAssignmentPolicy extends BasePolicy
             return false;
         }
 
-        if ($user->actingRole() === UserRole::MANAGER) {
+        if ($user->actingRole() === UserRole::PROJECT_MANAGER) {
             $assignment->loadMissing('task.project');
 
-            return $assignment->task?->project && $this->sameDepartment($user, $assignment->task->project);
+            return $assignment->task?->project
+                && $assignment->task->project->managers()->where('users.id', $user->id)->exists();
         }
 
         return true;
@@ -42,15 +43,17 @@ class TaskAssignmentPolicy extends BasePolicy
     public function delete(User $user, TaskAssignment $assignment): bool
     {
         if ($this->create($user) && $assignment->isVisibleTo($user)) {
-            if ($user->actingRole() === UserRole::MANAGER) {
+            if ($user->actingRole() === UserRole::PROJECT_MANAGER) {
                 $assignment->loadMissing('task.project');
 
-                return $assignment->task?->project && $this->sameDepartment($user, $assignment->task->project);
+                return $assignment->task?->project
+                    && $assignment->task->project->managers()->where('users.id', $user->id)->exists();
             }
 
             return true;
         }
 
-        return $user->actingRole() === UserRole::GENERAL && $assignment->user_id === $user->id;
+        return in_array($user->actingRole(), [UserRole::DEVELOPER, UserRole::QA], true)
+            && $assignment->user_id === $user->id;
     }
 }

@@ -79,7 +79,7 @@
           <tr>
             <td>
               <strong>{{ $item['name'] }}</strong>
-              <br><small class="text-muted">{{ $item['code'] }} · {{ $item['department_name'] ?? '-' }}</small>
+              <br><small class="text-muted">{{ $item['code'] }} · {{ $item['company_name'] ?? '-' }}</small>
             </td>
             <td><span class="badge {{ $item['display_status_class'] }}">{{ $item['display_status_label'] }}</span></td>
             <td style="min-width: 140px;">

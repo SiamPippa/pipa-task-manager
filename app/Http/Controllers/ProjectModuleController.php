@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\Services\CompanyServiceInterface;
-use App\Contracts\Services\DepartmentServiceInterface;
 use App\Contracts\Services\ProjectModuleServiceInterface;
 use App\Contracts\Services\ProjectServiceInterface;
 use App\Http\Requests\ProjectModule\StoreProjectModuleRequest;
@@ -19,7 +18,6 @@ class ProjectModuleController extends Controller
     public function __construct(
         private readonly ProjectModuleServiceInterface $projectModuleService,
         private readonly CompanyServiceInterface $companyService,
-        private readonly DepartmentServiceInterface $departmentService,
         private readonly ProjectServiceInterface $projectService,
     ) {}
 
@@ -27,17 +25,16 @@ class ProjectModuleController extends Controller
     {
         $this->authorize('viewAny', ProjectModule::class);
 
-        $filters = $this->scopedFilters($request, ['search', 'company_id', 'department_id', 'project_id']);
+        $filters = $this->scopedFilters($request, ['search', 'company_id', 'project_id']);
         $filters['viewer_id'] = auth()->id();
 
         return view('project-modules.index', [
-            'projectModules' => $this->projectModuleService->paginate($filters, 15, ['project.company', 'project.department']),
+            'projectModules' => $this->projectModuleService->paginate($filters, 15, ['project.company']),
             'filters' => $filters,
             'filterFields' => $this->scopedFilterFields([
                 ['type' => 'text', 'name' => 'search', 'label' => 'Search', 'placeholder' => 'Module name', 'col' => 3],
                 ['type' => 'select', 'name' => 'company_id', 'label' => 'Company', 'placeholder' => 'All companies', 'col' => 2, 'options' => $this->companyService->all()],
-                ['type' => 'select', 'name' => 'department_id', 'label' => 'Department', 'placeholder' => 'All departments', 'col' => 2, 'options' => $this->departmentService->all(), 'dependsOn' => 'company_id', 'lookup' => 'departments'],
-                ['type' => 'select', 'name' => 'project_id', 'label' => 'Project', 'placeholder' => 'All projects', 'col' => 2, 'options' => $this->projectService->all(), 'dependsOn' => ['company_id', 'department_id'], 'lookup' => 'projects'],
+                ['type' => 'select', 'name' => 'project_id', 'label' => 'Project', 'placeholder' => 'All projects', 'col' => 2, 'options' => $this->projectService->all(), 'dependsOn' => 'company_id', 'lookup' => 'projects'],
             ]),
         ]);
     }
@@ -51,7 +48,6 @@ class ProjectModuleController extends Controller
         return view('project-modules.create', [
             'projectModule' => new ProjectModule,
             'companies' => $companies,
-            'departments' => $this->scopedForCompany($this->departmentService->all()),
             'projects' => collect(),
             'companyWorkingHours' => $this->companyWorkingHours($companies),
         ]);
@@ -69,7 +65,7 @@ class ProjectModuleController extends Controller
 
     public function show(int $project_module): View
     {
-        $module = $this->projectModuleService->findOrFail($project_module, ['project.company', 'project.department']);
+        $module = $this->projectModuleService->findOrFail($project_module, ['project.company']);
         $this->authorize('view', $module);
 
         return view('project-modules.show', [
@@ -87,7 +83,6 @@ class ProjectModuleController extends Controller
         return view('project-modules.edit', [
             'projectModule' => $module,
             'companies' => $companies,
-            'departments' => $this->scopedForCompany($this->departmentService->all()),
             'projects' => $this->scopedForCompany($this->projectService->all()),
             'companyWorkingHours' => $this->companyWorkingHours($companies),
         ]);

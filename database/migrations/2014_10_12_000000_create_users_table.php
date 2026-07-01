@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\UserRole;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,10 +14,10 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->integer('company_id');
-            $table->integer('department_id')->nullable();
+            $table->string('employee_id')->nullable();
             $table->integer('designation_id')->nullable();
             $table->integer('reporting_manager_id')->nullable();
-            $table->unsignedTinyInteger('role')->default(UserRole::GENERAL);
+            $table->unsignedBigInteger('office_location_id')->nullable();
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');

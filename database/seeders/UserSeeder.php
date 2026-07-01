@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Enums\UserRole;
 use App\Models\Company;
-use App\Models\Department;
+use App\Models\OfficeLocation;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -24,13 +24,14 @@ class UserSeeder extends Seeder
             ]
         );
 
-        $department = Department::query()->firstOrCreate(
+        $officeLocation = OfficeLocation::query()->firstOrCreate(
             [
                 'company_id' => $company->id,
-                'name' => 'Engineering',
+                'name' => 'Head Office',
             ],
             [
-                'code' => 'ENG',
+                'code' => 'HO',
+                'address' => null,
                 'status' => true,
             ]
         );
@@ -39,32 +40,37 @@ class UserSeeder extends Seeder
             [
                 'email' => 'admin@pippa.com',
                 'name' => 'Siam M Zaque',
-                'role' => UserRole::ADMIN,
-                'department_id' => null,
+                'role' => UserRole::SUPER_ADMIN,
             ],
             [
-                'email' => 'dept_head@pippa.com',
-                'name' => 'Department Head',
-                'role' => UserRole::DEPARTMENT_HEAD,
-                'department_id' => $department->id,
+                'email' => 'company_admin@pippa.com',
+                'name' => 'Company Admin',
+                'role' => UserRole::COMPANY_ADMIN,
             ],
             [
-                'email' => 'manager@pippa.com',
-                'name' => 'Manager',
-                'role' => UserRole::MANAGER,
-                'department_id' => $department->id,
+                'email' => 'project_manager@pippa.com',
+                'name' => 'Project Manager',
+                'role' => UserRole::PROJECT_MANAGER,
             ],
             [
                 'email' => 'team_lead@pippa.com',
                 'name' => 'Team Lead',
                 'role' => UserRole::TEAM_LEAD,
-                'department_id' => $department->id,
             ],
             [
-                'email' => 'general_user@pippa.com',
-                'name' => 'General User',
-                'role' => UserRole::GENERAL,
-                'department_id' => $department->id,
+                'email' => 'developer@pippa.com',
+                'name' => 'Developer',
+                'role' => UserRole::DEVELOPER,
+            ],
+            [
+                'email' => 'qa@pippa.com',
+                'name' => 'QA',
+                'role' => UserRole::QA,
+            ],
+            [
+                'email' => 'viewer@pippa.com',
+                'name' => 'Viewer',
+                'role' => UserRole::VIEWER,
             ],
         ];
 
@@ -73,9 +79,10 @@ class UserSeeder extends Seeder
                 ['email' => $userData['email']],
                 [
                     'company_id' => $company->id,
-                    'department_id' => $userData['department_id'],
+                    'employee_id' => strtoupper(strtok($userData['email'], '@')),
                     'designation_id' => null,
                     'reporting_manager_id' => null,
+                    'office_location_id' => $officeLocation->id,
                     'name' => $userData['name'],
                     'password' => Hash::make('password'),
                     'status' => true,

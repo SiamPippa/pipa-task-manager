@@ -19,7 +19,6 @@
         <thead>
           <tr>
                 <th>Company</th>
-                <th>Department</th>
                 <th>Team Lead</th>
                 <th>Members</th>
                 <th>Name</th>
@@ -32,7 +31,6 @@
           @forelse ($teams as $item)
           <tr>
                 <td>{{ $item->company?->name ?? '-' }}</td>
-                <td>{{ $item->department?->name ?? '-' }}</td>
                 <td>{{ $item->teamLead?->name ?? '-' }}</td>
                 <td>{{ $item->members->count() }}</td>
                 <td>{{ $item->name ?? '-' }}</td>

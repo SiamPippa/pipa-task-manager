@@ -1,23 +1,11 @@
 @php
   $projectModule = $projectModule ?? null;
   $selectedCompanyId = old('company_id', $projectModule?->project?->company_id);
-  $selectedDepartmentId = old('department_id', $projectModule?->project?->department_id);
 @endphp
 
 @include('partials.form.company-field', [
     'companies' => $companies,
     'selected' => $selectedCompanyId,
-])
-@include('partials.form.searchable-select', [
-    'name' => 'department_id',
-    'label' => 'Department',
-    'required' => true,
-    'placeholder' => 'Search department...',
-    'emptyOption' => 'Select department',
-    'options' => $departments,
-    'selected' => $selectedDepartmentId,
-    'dependsOn' => 'company_id',
-    'lookup' => 'departments',
 ])
 @include('partials.form.searchable-select', [
     'name' => 'project_id',
@@ -27,7 +15,7 @@
     'emptyOption' => 'Select project',
     'options' => $projects,
     'selected' => old('project_id', $projectModule?->project_id),
-    'dependsOn' => ['company_id', 'department_id'],
+    'dependsOn' => 'company_id',
     'lookup' => 'projects',
 ])
 <div class="mb-3">

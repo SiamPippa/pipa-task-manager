@@ -9,7 +9,7 @@ trait ValidatesActiveCompanyForCreate
 {
     protected function validateActiveCompanyForCreate(
         Validator $validator,
-        string $message = 'Department cannot be created under an inactive company.',
+        string $message = 'Record cannot be created under an inactive company.',
     ): void {
         $company = Company::query()->find($this->integer('company_id'));
 

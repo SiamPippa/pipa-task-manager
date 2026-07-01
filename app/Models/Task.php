@@ -25,19 +25,23 @@ class Task extends Model
         'description',
         'estimate_hours',
         'status',
+        'priority',
+        'due_date',
+        'qa_status',
+        'qa_comment',
     ];
 
     protected $casts = [
         'estimate_hours' => 'decimal:2',
+        'due_date' => 'date',
     ];
 
     public function scopeVisibleTo(Builder $query, User $user): Builder
     {
-        if ($user->actingRole() === UserRole::GENERAL) {
+        if (in_array($user->actingRole(), [UserRole::DEVELOPER, UserRole::QA], true)) {
             return $query->where(function (Builder $taskQuery) use ($user) {
                 $taskQuery
-                    ->whereHas('project', fn (Builder $projectQuery) => $projectQuery->visibleTo($user))
-                    ->orWhereHas('assignees', fn (Builder $userQuery) => $userQuery->where('users.id', $user->id));
+                    ->whereHas('assignees', fn (Builder $userQuery) => $userQuery->where('users.id', $user->id));
             });
         }
 

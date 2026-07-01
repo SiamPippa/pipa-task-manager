@@ -30,16 +30,16 @@ class ProjectModulePolicy extends BasePolicy
             return false;
         }
 
-        if ($user->actingRole() === UserRole::ADMIN) {
+        if ($user->actingRole() === UserRole::SUPER_ADMIN) {
             return true;
         }
 
-        if ($user->actingRole() === UserRole::DEPARTMENT_HEAD) {
-            return $module->project && $this->sameCompany($user, $module->project) && $this->sameDepartment($user, $module->project);
+        if ($user->actingRole() === UserRole::COMPANY_ADMIN) {
+            return $module->project && $this->sameCompany($user, $module->project);
         }
 
-        if ($user->actingRole() === UserRole::MANAGER) {
-            return $module->project && $this->canMutateInOwnDepartment($user, $module->project);
+        if ($user->actingRole() === UserRole::PROJECT_MANAGER) {
+            return $module->project && $module->project->managers()->where('users.id', $user->id)->exists();
         }
 
         return false;

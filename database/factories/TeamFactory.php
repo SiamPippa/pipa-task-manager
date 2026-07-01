@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Company;
-use App\Models\Department;
 use App\Models\Team;
 use App\Models\User;
 use Database\Seeders\Support\RealisticData;
@@ -23,7 +22,6 @@ class TeamFactory extends Factory
 
         return [
             'company_id' => Company::factory(),
-            'department_id' => Department::factory(),
             'team_lead_id' => User::factory(),
             'name' => $name,
             'code' => $code,

@@ -192,8 +192,8 @@ class CompanySettingValidationTest extends TestCase
 
     private function adminUser(Company $company): User
     {
-        $user = User::factory()->forOrganization($company)->create();
-        $user->syncRoles([UserRole::ADMIN]);
+        $user = User::factory()->forOrganization($company)->create(['status' => true]);
+        $user->syncRoles([UserRole::SUPER_ADMIN]);
 
         return $user;
     }

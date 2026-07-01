@@ -20,11 +20,6 @@ class UpdateProjectRequest extends FormRequest
     {
         return [
             'company_id' => ['required', 'integer', 'exists:companies,id'],
-            'department_id' => [
-                'required',
-                'integer',
-                Rule::exists('departments', 'id')->where(fn ($query) => $query->where('company_id', $this->integer('company_id'))),
-            ],
             'name' => ['required', 'string', 'max:255', $this->uniqueProjectNameRule()],
             'code' => ['required', 'string', 'max:255', Rule::unique('projects', 'code')->ignore($this->route('project'))],
             'client_name' => ['required', 'string', 'max:255'],
@@ -32,6 +27,11 @@ class UpdateProjectRequest extends FormRequest
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'status' => ['required', 'string', 'in:active,inactive,completed'],
+            'manager_ids' => ['nullable', 'array'],
+            'manager_ids.*' => [
+                'integer',
+                Rule::exists('users', 'id')->where(fn ($query) => $query->where('company_id', $this->integer('company_id'))),
+            ],
         ];
     }
 }

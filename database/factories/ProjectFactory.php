@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Company;
 use App\Models\CompanySetting;
-use App\Models\Department;
 use App\Models\Project;
 use App\Support\ProjectEstimatedHoursCalculator;
 use Carbon\Carbon;
@@ -32,7 +31,6 @@ class ProjectFactory extends Factory
 
         return [
             'company_id' => Company::factory(),
-            'department_id' => Department::factory(),
             'client_name' => $this->faker->company(),
             'description' => $this->faker->optional()->sentence(),
             'start_date' => Carbon::parse($startDate)->toDateString(),

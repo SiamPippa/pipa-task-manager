@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('time_logs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('daily_report_id')->unique();
+            $table->unsignedBigInteger('daily_report_id')->nullable();
             $table->integer('project_id');
             $table->integer('task_id');
             $table->integer('user_id');

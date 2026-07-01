@@ -33,7 +33,7 @@ class UserPolicy extends BasePolicy
             return false;
         }
 
-        if ($user->actingRole() === UserRole::DEPARTMENT_HEAD && $model->hasRole(UserRole::ADMIN)) {
+        if ($user->actingRole() === UserRole::COMPANY_ADMIN && $model->hasRole(UserRole::SUPER_ADMIN)) {
             return false;
         }
 

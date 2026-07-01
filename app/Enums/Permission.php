@@ -14,9 +14,9 @@ class Permission
 
     public const COMPANY_SETTINGS_MANAGE = 'company-settings.manage';
 
-    public const DEPARTMENTS_MANAGE = 'departments.manage';
-
     public const DESIGNATIONS_MANAGE = 'designations.manage';
+
+    public const OFFICE_LOCATIONS_MANAGE = 'office-locations.manage';
 
     public const USERS_MANAGE = 'users.manage';
 
@@ -38,6 +38,12 @@ class Permission
 
     public const TASKS_MANAGE = 'tasks.manage';
 
+    public const TASKS_UPDATE_OWN = 'tasks.update-own';
+
+    public const QA_TASKS_VIEW = 'qa-tasks.view';
+
+    public const QA_TASKS_MANAGE = 'qa-tasks.manage';
+
     public const TASK_ASSIGNMENTS_VIEW = 'task-assignments.view';
 
     public const TASK_ASSIGNMENTS_MANAGE = 'task-assignments.manage';
@@ -47,6 +53,16 @@ class Permission
     public const DAILY_REPORTS_MANAGE = 'daily-reports.manage';
 
     public const DAILY_REPORTS_MANAGE_OWN = 'daily-reports.manage-own';
+
+    public const TIME_LOGS_VIEW = 'time-logs.view';
+
+    public const TIME_LOGS_MANAGE = 'time-logs.manage';
+
+    public const TIME_LOGS_MANAGE_OWN = 'time-logs.manage-own';
+
+    public const DASHBOARD_VIEW = 'dashboard.view';
+
+    public const REPORTS_EXPORT = 'reports.export';
 
     public const RBAC_VIEW = 'rbac.view';
 
@@ -63,8 +79,8 @@ class Permission
             self::COMPANIES_MANAGE => 'Manage Companies',
             self::COMPANY_SETTINGS_VIEW => 'View Company Settings',
             self::COMPANY_SETTINGS_MANAGE => 'Manage Company Settings',
-            self::DEPARTMENTS_MANAGE => 'Manage Departments',
             self::DESIGNATIONS_MANAGE => 'Manage Designations',
+            self::OFFICE_LOCATIONS_MANAGE => 'Manage Office Locations',
             self::USERS_MANAGE => 'Manage Users',
             self::PROJECTS_VIEW => 'View Projects',
             self::PROJECTS_MANAGE => 'Manage Projects',
@@ -75,11 +91,19 @@ class Permission
             self::PROJECT_TEAM_ASSIGNMENTS_MANAGE => 'Manage Project Team Assignments',
             self::TASKS_VIEW => 'View Tasks',
             self::TASKS_MANAGE => 'Manage Tasks',
+            self::TASKS_UPDATE_OWN => 'Update Own Assigned Tasks',
+            self::QA_TASKS_VIEW => 'View Assigned QA Tasks',
+            self::QA_TASKS_MANAGE => 'Manage Assigned QA Tasks',
             self::TASK_ASSIGNMENTS_VIEW => 'View Task Assignments',
             self::TASK_ASSIGNMENTS_MANAGE => 'Manage Task Assignments',
             self::DAILY_REPORTS_VIEW => 'View Daily Reports',
             self::DAILY_REPORTS_MANAGE => 'Manage Daily Reports',
             self::DAILY_REPORTS_MANAGE_OWN => 'Manage Own Daily Reports',
+            self::TIME_LOGS_VIEW => 'View Time Logs',
+            self::TIME_LOGS_MANAGE => 'Manage Time Logs',
+            self::TIME_LOGS_MANAGE_OWN => 'Manage Own Time Logs',
+            self::DASHBOARD_VIEW => 'View Dashboard',
+            self::REPORTS_EXPORT => 'Export Reports',
             self::RBAC_VIEW => 'View RBAC Permissions',
         ];
     }
@@ -98,8 +122,8 @@ class Permission
                 self::COMPANIES_MANAGE,
                 self::COMPANY_SETTINGS_VIEW,
                 self::COMPANY_SETTINGS_MANAGE,
-                self::DEPARTMENTS_MANAGE,
                 self::DESIGNATIONS_MANAGE,
+                self::OFFICE_LOCATIONS_MANAGE,
                 self::USERS_MANAGE,
             ],
             'Projects & Teams' => [
@@ -114,6 +138,9 @@ class Permission
             'Tasks' => [
                 self::TASKS_VIEW,
                 self::TASKS_MANAGE,
+                self::TASKS_UPDATE_OWN,
+                self::QA_TASKS_VIEW,
+                self::QA_TASKS_MANAGE,
                 self::TASK_ASSIGNMENTS_VIEW,
                 self::TASK_ASSIGNMENTS_MANAGE,
             ],
@@ -121,8 +148,13 @@ class Permission
                 self::DAILY_REPORTS_VIEW,
                 self::DAILY_REPORTS_MANAGE,
                 self::DAILY_REPORTS_MANAGE_OWN,
+                self::TIME_LOGS_VIEW,
+                self::TIME_LOGS_MANAGE,
+                self::TIME_LOGS_MANAGE_OWN,
+                self::REPORTS_EXPORT,
             ],
             'System' => [
+                self::DASHBOARD_VIEW,
                 self::RBAC_VIEW,
             ],
         ];

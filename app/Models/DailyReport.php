@@ -31,23 +31,16 @@ class DailyReport extends Model
 
     public function scopeVisibleTo(Builder $query, User $user): Builder
     {
-        if ($user->actingRole() === UserRole::ADMIN) {
+        if ($user->actingRole() === UserRole::SUPER_ADMIN) {
             return $query;
         }
 
-        if ($user->actingRole() === UserRole::DEPARTMENT_HEAD && $user->department_id) {
-            return $query->where(function (Builder $reportQuery) use ($user) {
-                $reportQuery
-                    ->whereHas('project', fn (Builder $projectQuery) => $projectQuery->where('department_id', $user->department_id))
-                    ->orWhereHas('user', fn (Builder $userQuery) => $userQuery->where('department_id', $user->department_id));
-            });
+        if ($user->actingRole() === UserRole::COMPANY_ADMIN && $user->company_id) {
+            return $query->whereHas('project', fn (Builder $projectQuery) => $projectQuery->where('company_id', $user->company_id));
         }
 
-        if ($user->actingRole() === UserRole::MANAGER && $user->company_id) {
-            return $query->whereHas(
-                'project',
-                fn (Builder $projectQuery) => $projectQuery->where('company_id', $user->company_id)
-            );
+        if ($user->actingRole() === UserRole::PROJECT_MANAGER) {
+            return $query->whereHas('project.managers', fn (Builder $managerQuery) => $managerQuery->where('users.id', $user->id));
         }
 
         if ($user->actingRole() === UserRole::TEAM_LEAD) {

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\Services\CompanyServiceInterface;
-use App\Contracts\Services\DepartmentServiceInterface;
 use App\Contracts\Services\ProjectAnalyticsServiceInterface;
 use App\Contracts\Services\ProjectServiceInterface;
 use App\Contracts\Services\TeamServiceInterface;
@@ -18,7 +17,6 @@ class ProjectAnalyticsController extends Controller
     public function __construct(
         private readonly ProjectAnalyticsServiceInterface $analyticsService,
         private readonly CompanyServiceInterface $companyService,
-        private readonly DepartmentServiceInterface $departmentService,
         private readonly ProjectServiceInterface $projectService,
         private readonly TeamServiceInterface $teamService,
         private readonly UserServiceInterface $userService
@@ -30,7 +28,6 @@ class ProjectAnalyticsController extends Controller
 
         $filters = $this->scopedFilters($request, [
             'company_id',
-            'department_id',
             'project_id',
             'team_id',
             'team_lead_id',
@@ -61,7 +58,6 @@ class ProjectAnalyticsController extends Controller
 
         $filters = $this->scopedFilters($request, [
             'company_id',
-            'department_id',
             'team_id',
             'team_lead_id',
             'user_id',
@@ -89,7 +85,6 @@ class ProjectAnalyticsController extends Controller
     {
         return [
             ['type' => 'select', 'name' => 'company_id', 'label' => 'Company', 'placeholder' => 'All companies', 'col' => 2, 'options' => $this->companyService->all()],
-            ['type' => 'select', 'name' => 'department_id', 'label' => 'Department', 'placeholder' => 'All departments', 'col' => 2, 'options' => $this->departmentService->all(), 'dependsOn' => 'company_id', 'lookup' => 'departments'],
             ['type' => 'select', 'name' => 'project_id', 'label' => 'Project', 'placeholder' => 'All projects', 'col' => 2, 'options' => $this->projectService->all(), 'dependsOn' => 'company_id', 'lookup' => 'projects'],
             ['type' => 'select', 'name' => 'team_id', 'label' => 'Team', 'placeholder' => 'All teams', 'col' => 2, 'options' => $this->teamService->all(), 'dependsOn' => 'company_id', 'lookup' => 'teams'],
             ['type' => 'select', 'name' => 'team_lead_id', 'label' => 'Team Lead', 'placeholder' => 'All team leads', 'col' => 2, 'options' => [], 'dependsOn' => 'company_id', 'lookup' => 'team-leads'],

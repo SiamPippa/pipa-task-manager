@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\Services\CompanyServiceInterface;
-use App\Contracts\Services\DepartmentServiceInterface;
 use App\Contracts\Services\ProjectServiceInterface;
 use App\Contracts\Services\ProjectTeamAssignmentServiceInterface;
 use App\Contracts\Services\TeamServiceInterface;
@@ -19,7 +18,6 @@ class ProjectTeamAssignmentController extends Controller
     public function __construct(
         private readonly ProjectTeamAssignmentServiceInterface $projectTeamAssignmentService,
         private readonly CompanyServiceInterface $companyService,
-        private readonly DepartmentServiceInterface $departmentService,
         private readonly ProjectServiceInterface $projectService,
         private readonly TeamServiceInterface $teamService,
     ) {}
@@ -28,7 +26,7 @@ class ProjectTeamAssignmentController extends Controller
     {
         $this->authorize('viewAny', ProjectTeamAssignment::class);
 
-        $filters = $this->scopedFilters($request, ['search', 'company_id', 'department_id', 'project_id', 'team_id']);
+        $filters = $this->scopedFilters($request, ['search', 'company_id', 'project_id', 'team_id']);
         $filters['viewer_id'] = auth()->id();
 
         return view('project-team-assignments.index', [
@@ -37,9 +35,8 @@ class ProjectTeamAssignmentController extends Controller
             'filterFields' => $this->scopedFilterFields([
                 ['type' => 'text', 'name' => 'search', 'label' => 'Search', 'placeholder' => 'Project or team', 'col' => 3],
                 ['type' => 'select', 'name' => 'company_id', 'label' => 'Company', 'placeholder' => 'All companies', 'col' => 2, 'options' => $this->companyService->all()],
-                ['type' => 'select', 'name' => 'department_id', 'label' => 'Department', 'placeholder' => 'All departments', 'col' => 2, 'options' => $this->departmentService->all(), 'dependsOn' => 'company_id', 'lookup' => 'departments'],
-                ['type' => 'select', 'name' => 'project_id', 'label' => 'Project', 'placeholder' => 'All projects', 'col' => 2, 'options' => $this->projectService->all(), 'dependsOn' => ['company_id', 'department_id'], 'lookup' => 'projects'],
-                ['type' => 'select', 'name' => 'team_id', 'label' => 'Team', 'placeholder' => 'All teams', 'col' => 2, 'options' => $this->teamService->all(), 'dependsOn' => ['company_id', 'department_id'], 'lookup' => 'teams'],
+                ['type' => 'select', 'name' => 'project_id', 'label' => 'Project', 'placeholder' => 'All projects', 'col' => 2, 'options' => $this->projectService->all(), 'dependsOn' => 'company_id', 'lookup' => 'projects'],
+                ['type' => 'select', 'name' => 'team_id', 'label' => 'Team', 'placeholder' => 'All teams', 'col' => 2, 'options' => $this->teamService->all(), 'dependsOn' => 'company_id', 'lookup' => 'teams'],
             ]),
         ]);
     }
@@ -50,7 +47,6 @@ class ProjectTeamAssignmentController extends Controller
 
         return view('project-team-assignments.create', [
             'companies' => $this->scopedForCompany($this->companyService->all()),
-            'departments' => $this->scopedForCompany($this->departmentService->all()),
             'projects' => collect(),
             'teams' => collect(),
         ]);
@@ -88,7 +84,6 @@ class ProjectTeamAssignmentController extends Controller
         return view('project-team-assignments.edit', [
             'projectTeamAssignment' => $assignment,
             'companies' => $this->scopedForCompany($this->companyService->all()),
-            'departments' => $this->scopedForCompany($this->departmentService->all()),
             'projects' => $this->scopedForCompany($this->projectService->all()),
             'teams' => $this->scopedForCompany($this->teamService->all()),
         ]);

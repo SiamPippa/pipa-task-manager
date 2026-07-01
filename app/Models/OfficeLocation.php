@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Department extends Model
+class OfficeLocation extends Model
 {
     use HasFactory;
 
@@ -15,6 +16,7 @@ class Department extends Model
         'company_id',
         'name',
         'code',
+        'address',
         'status',
     ];
 
@@ -22,23 +24,18 @@ class Department extends Model
         'status' => 'boolean',
     ];
 
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', true);
+    }
+
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }
 
-    public function teams(): HasMany
-    {
-        return $this->hasMany(Team::class);
-    }
-
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
-    }
-
-    public function projects(): HasMany
-    {
-        return $this->hasMany(Project::class);
     }
 }
